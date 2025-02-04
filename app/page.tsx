@@ -1,11 +1,12 @@
 'use client';
 
-import { Search, X } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { Search } from 'lucide-react';
 import { useState } from 'react';
 
+import { SearchDialog } from '@/components/SearchDialog';
 import {
   Carousel,
   CarouselContent,
@@ -13,7 +14,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { SearchDialog } from '@/components/search-dialog';
 
 // You can replace these with your actual ingredient images
 const ingredients = [
@@ -29,7 +29,7 @@ export default function Home() {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   return (
-    <div className="min-h-screen p-4 sm:p-8">
+    <div className="p-4 sm:p-8">
       <div className="max-w-2xl mx-auto mt-8">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 pointer-events-none" />
@@ -73,8 +73,10 @@ export default function Home() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <div className="hidden md:block">
+              <CarouselPrevious />
+              <CarouselNext />
+            </div>
           </Carousel>
         </div>
       </div>

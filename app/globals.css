@@ -70,3 +70,48 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* React Select Custom Styles */
+.react-select__control {
+  @apply !min-h-[40px] !bg-background !border-input !rounded-md !shadow-none;
+}
+
+.react-select__control--is-focused {
+  @apply !border-ring !ring-2 !ring-ring !ring-offset-2 !ring-offset-background;
+}
+
+.react-select__menu {
+  @apply !bg-popover !border !border-input !rounded-md;
+}
+
+.react-select__option {
+  @apply !bg-popover !text-foreground cursor-pointer;
+}
+
+.react-select__option--is-focused {
+  @apply !bg-accent !text-accent-foreground;
+}
+
+.react-select__option--is-selected {
+  @apply !bg-primary !text-primary-foreground;
+}
+
+.react-select__multi-value {
+  @apply !bg-secondary !rounded-md;
+}
+
+.react-select__multi-value__label {
+  @apply !text-secondary-foreground;
+}
+
+.react-select__multi-value__remove {
+  @apply !text-secondary-foreground hover:!bg-destructive hover:!text-destructive-foreground !rounded-md;
+}
+
+.react-select__input-container {
+  @apply !text-foreground;
+}
+
+.react-select__placeholder {
+  @apply !text-muted-foreground;
+}

@@ -12,7 +12,7 @@ if (!process.env.PROJECT_REF) {
 
 try {
   execSync(
-    `npx supabase gen types typescript --project-id "${process.env.PROJECT_REF}" > src/types/database.types.ts`,
+    `npx supabase gen types typescript --project-id "${process.env.PROJECT_REF}" > database.types.ts`,
     { stdio: 'inherit' }
   );
   console.log('\x1b[32m✅ Types generated successfully\x1b[0m');
