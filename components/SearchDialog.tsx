@@ -3,7 +3,6 @@
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Tables } from '@/database.types';
-import { getCommonIngredients, searchIngredients } from '@/services/ingredientService';
 import { useQuery } from '@tanstack/react-query';
 import { debounce } from 'lodash';
 import { ChevronRight, Search, UtensilsCrossed } from 'lucide-react';
@@ -51,14 +50,26 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   // Common ingredients query
   const { data: commonIngredients = [], isLoading: isLoadingCommon } = useQuery({
     queryKey: ['commonIngredients'],
-    queryFn: getCommonIngredients,
+    queryFn: async () => {
+      const response = await fetch('/api/ingredients/common');
+      if (!response.ok) {
+        throw new Error('Failed to fetch common ingredients');
+      }
+      return response.json() as Promise<Tables<'ingredients'>[]>;
+    },
     enabled: open,
   });
 
   // Search query
   const { data: searchResults = [], isLoading: isLoadingSearch } = useQuery({
     queryKey: ['ingredients', searchQuery],
-    queryFn: () => searchIngredients(searchQuery),
+    queryFn: async () => {
+      const response = await fetch(`/api/ingredients?query=${encodeURIComponent(searchQuery)}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch ingredients');
+      }
+      return response.json() as Promise<Tables<'ingredients'>[]>;
+    },
     enabled: Boolean(searchQuery.trim()),
   });
 

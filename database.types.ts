@@ -105,6 +105,7 @@ export type Database = {
       substitutions: {
         Row: {
           allergens: string[]
+          amount: number
           baking_tips: string[] | null
           best_for: string[]
           common_uses: string[] | null
@@ -117,15 +118,15 @@ export type Database = {
           notes: string | null
           original_ingredient_id: string
           rating: number
-          rating_explanation: string | null
           structure_effects: string[] | null
-          temperature_adjustments: Json
           texture_effects: string[] | null
           time_adjustments: Json
+          unit: Database["public"]["Enums"]["unit_type"]
           updated_at: string
         }
         Insert: {
           allergens?: string[]
+          amount?: number
           baking_tips?: string[] | null
           best_for: string[]
           common_uses?: string[] | null
@@ -138,15 +139,15 @@ export type Database = {
           notes?: string | null
           original_ingredient_id: string
           rating: number
-          rating_explanation?: string | null
           structure_effects?: string[] | null
-          temperature_adjustments?: Json
           texture_effects?: string[] | null
           time_adjustments?: Json
+          unit?: Database["public"]["Enums"]["unit_type"]
           updated_at?: string
         }
         Update: {
           allergens?: string[]
+          amount?: number
           baking_tips?: string[] | null
           best_for?: string[]
           common_uses?: string[] | null
@@ -159,11 +160,10 @@ export type Database = {
           notes?: string | null
           original_ingredient_id?: string
           rating?: number
-          rating_explanation?: string | null
           structure_effects?: string[] | null
-          temperature_adjustments?: Json
           texture_effects?: string[] | null
           time_adjustments?: Json
+          unit?: Database["public"]["Enums"]["unit_type"]
           updated_at?: string
         }
         Relationships: [

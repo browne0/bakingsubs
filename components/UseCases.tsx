@@ -2,7 +2,7 @@ import { Check } from 'lucide-react';
 
 interface UseCasesProps {
   bestFor: string[];
-  commonUses: string[];
+  commonUses: string[] | null;
 }
 
 export function UseCases({ bestFor, commonUses }: UseCasesProps) {
@@ -20,14 +20,16 @@ export function UseCases({ bestFor, commonUses }: UseCasesProps) {
         </div>
       </div>
 
-      <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
-        <h3 className="font-medium mb-3">Common Uses</h3>
-        <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
-          {commonUses.map((use, index) => (
-            <li key={index}>{use}</li>
-          ))}
-        </ul>
-      </div>
+      {commonUses && (
+        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+          <h3 className="font-medium mb-3">Common Uses</h3>
+          <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
+            {commonUses.map((use, index) => (
+              <li key={index}>{use}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

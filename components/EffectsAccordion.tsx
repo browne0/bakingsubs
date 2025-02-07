@@ -5,9 +5,9 @@ import { useState } from 'react';
 
 interface EffectsAccordionProps {
   effects: {
-    flavor: string[];
-    texture: string[];
-    structure: string[];
+    flavor: string[] | null;
+    texture: string[] | null;
+    structure: string[] | null;
   };
 }
 

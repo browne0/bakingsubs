@@ -1,7 +1,7 @@
+import { getIngredientBySlug } from '@/app/services/ingredientService';
+import { getSubstitutionsByIngredientId } from '@/app/services/substitutionService';
 import { BreadcrumbNav } from '@/components/BreadcrumbNav';
 import { SubstitutionCard } from '@/components/SubstitutionCard';
-import { getIngredientBySlug } from '@/services/ingredientService';
-import { getSubstitutionsByIngredientId } from '@/services/substitutionService';
 import { notFound } from 'next/navigation';
 
 export default async function IngredientPage({ params }: { params: { slug: string } }) {

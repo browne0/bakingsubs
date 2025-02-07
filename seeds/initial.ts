@@ -1,7 +1,7 @@
+import { createSubstitution } from '@/app/services/substitutionService';
+import { slugify } from '@/app/utils/slugify';
+import { createClient } from '@/app/utils/supabase/server';
 import { Enums } from '@/database.types';
-import { createSubstitution } from '@/services/substitutionService';
-import { slugify } from '@/utils/slugify';
-import { supabase } from '@/utils/supabase/client';
 
 type UnitType = Enums<'unit_type'>;
 
@@ -256,6 +256,7 @@ const substitutions = [
 
 async function seedDatabase() {
   const ingredientIds: Record<string, string> = {};
+  const supabase = await createClient();
 
   // Upsert ingredients
   for (const category of Object.values(ingredients)) {

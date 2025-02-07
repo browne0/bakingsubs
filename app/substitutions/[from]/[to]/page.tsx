@@ -1,5 +1,11 @@
+import { getSubstitutionByIngredientId } from '@/app/services/substitutionService';
+import { BakingAdjustments } from '@/components/BakingAdjustments';
 import { BreadcrumbNav } from '@/components/BreadcrumbNav';
-import { getSubstitutionByIngredientId } from '@/services/substitutionService';
+import { DietaryTags } from '@/components/DietaryTags';
+import { EffectsAccordion } from '@/components/EffectsAccordion';
+import { StarRating } from '@/components/StarRating';
+import { UseCases } from '@/components/UseCases';
+import { QueryData, QueryError } from '@supabase/supabase-js';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -20,13 +26,27 @@ interface Props {
   }>;
 }
 
+async function getSubstitution(
+  id: string
+): Promise<QueryData<ReturnType<typeof getSubstitutionByIngredientId>> | QueryError> {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/substitutions/${id}`, {
+    next: { tags: ['substitution'] },
+  });
+
+  if (!response.ok) {
+    const errorData: QueryError = await response.json();
+    return errorData;
+  }
+
+  return response.json();
+}
+
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { from } = await params;
+  const substitution = await getSubstitution(from);
 
-  const { data: substitution, error } = await getSubstitutionByIngredientId(from);
-
-  if (!substitution || error) {
+  if (!substitution || 'code' in substitution) {
     return {
       title: 'Substitution Not Found',
     };
@@ -53,9 +73,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SubstitutionPage({ params }: Props) {
   const { from } = await params;
-  const { data: substitution, error } = await getSubstitutionByIngredientId(from);
+  const substitution = await getSubstitution(from);
 
-  if (error || !substitution) {
+  if (!substitution || 'code' in substitution) {
     notFound();
   }
 
@@ -85,24 +105,20 @@ export default async function SubstitutionPage({ params }: Props) {
           </h1>
 
           {/* Desktop Rating & Ratio */}
-          {/* <div className="flex items-center justify-between">
-            <StarRating
-              rating={substitution.rating}
-              explanation={substitution.rating_explanation}
-              className="text-xl"
-            />
-          </div> */}
+          <div className="flex items-center justify-between">
+            <StarRating rating={substitution.rating} className="text-xl" />
+          </div>
 
           {/* Dietary & Allergen Tags */}
-          {/* <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
             <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
               Dietary & Allergen Information
             </h2>
             <DietaryTags dietary={substitution.dietary_flags} allergens={substitution.allergens} />
-          </div> */}
+          </div>
 
           {/* Substitution Amounts */}
-          {/* <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
             <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
               Substitution Amounts
             </h2>
@@ -114,36 +130,34 @@ export default async function SubstitutionPage({ params }: Props) {
                 {si.notes && <span className="text-sm text-gray-500">({si.notes})</span>}
               </div>
             ))}
-          </div> */}
+          </div>
         </div>
 
         {/* Effects Section */}
         <section className="space-y-4">
-          {/* <h2 className="text-xl font-semibold">Effects on Your Baking</h2>
+          <h2 className="text-xl font-semibold">Effects on Your Baking</h2>
           <EffectsAccordion
             effects={{
               flavor: substitution.flavor_effects,
               texture: substitution.texture_effects,
               structure: substitution.structure_effects,
             }}
-          /> */}
+          />
         </section>
 
         {/* Use Cases */}
-        {/* <section className="space-y-4">
+        <section className="space-y-4">
           <h2 className="text-xl font-semibold">Best Uses</h2>
           <UseCases bestFor={substitution.best_for} commonUses={substitution.common_uses} />
-        </section> */}
+        </section>
 
         {/* Baking Adjustments */}
-        {/* <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Baking Adjustments</h2>
+        <section className="space-y-4">
           <BakingAdjustments
-            temperature={substitution.temperature_adjustments}
-            time={substitution.time_adjustments}
+            time={substitution.time_adjustments as { change?: string; note?: string }}
             tips={substitution.baking_tips}
           />
-        </section> */}
+        </section>
       </div>
     </div>
   );

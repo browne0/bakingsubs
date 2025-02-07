@@ -1,5 +1,7 @@
 import { Database } from '@/database.types';
-import { supabase } from '@/utils/supabase/client';
+import { revalidateTag } from 'next/cache';
+import { slugify } from '../utils/slugify';
+import { createClient } from '../utils/supabase/server';
 
 type SubstitutionInsert = Database['public']['Tables']['substitutions']['Insert'];
 type SubstitutionIngredientInsert =
@@ -13,8 +15,30 @@ export async function createSubstitution(
     unit: Database['public']['Enums']['unit_type'];
     notes?: string;
   }>,
-  data: Omit<SubstitutionInsert, 'id' | 'original_ingredient_id'>
+  data: Omit<SubstitutionInsert, 'id' | 'original_ingredient_id' | 'dietary_flags' | 'allergens'>
 ) {
+  const supabase = await createClient();
+
+  // Fetch all ingredients to get their dietary flags and allergens
+  const { data: ingredients, error: fetchIngredientsError } = await supabase
+    .from('ingredients')
+    .select('id, dietary_flags, allergens')
+    .in(
+      'id',
+      toIngredients.map((ing) => ing.ingredientId)
+    );
+
+  if (fetchIngredientsError) throw fetchIngredientsError;
+
+  // Aggregate dietary flags and allergens
+  const dietaryFlags = new Set<string>();
+  const allergens = new Set<string>();
+
+  ingredients.forEach((ingredient) => {
+    ingredient.dietary_flags?.forEach((flag) => dietaryFlags.add(flag));
+    ingredient.allergens?.forEach((allergen) => allergens.add(allergen));
+  });
+
   // Check for duplicate ingredients
   const uniqueIngredients = new Set(toIngredients.map((ing) => ing.ingredientId));
   if (uniqueIngredients.size !== toIngredients.length) {
@@ -26,14 +50,32 @@ export async function createSubstitution(
     throw new Error('Cannot substitute an ingredient with itself');
   }
 
-  const id = `${originalIngredientId}-to-${toIngredients[0].ingredientId}`;
+  // Generate ID from the substitution name
+  if (!data.name) {
+    throw new Error('Substitution name is required');
+  }
 
-  // Start a Supabase transaction
+  const id = slugify(data.name);
+
+  // Check if substitution with this ID already exists
+  const { data: existing } = await supabase
+    .from('substitutions')
+    .select('id')
+    .eq('id', id)
+    .single();
+
+  if (existing) {
+    throw new Error('A substitution with this name already exists');
+  }
+
+  // Insert with aggregated dietary information
   const { data: substitution, error: substitutionError } = await supabase
     .from('substitutions')
     .insert({
       id,
       original_ingredient_id: originalIngredientId,
+      dietary_flags: Array.from(dietaryFlags),
+      allergens: Array.from(allergens),
       ...data,
     })
     .select()
@@ -58,10 +100,15 @@ export async function createSubstitution(
 
   if (ingredientsError) throw ingredientsError;
 
+  // Revalidate after successful creation
+  revalidateTag('substitution');
+
   return substitution;
 }
 
 export async function getSubstitutionByIngredientId(from: string) {
+  const supabase = await createClient();
+
   return supabase
     .from('substitutions')
     .select(
@@ -81,6 +128,8 @@ export async function getSubstitutionByIngredientId(from: string) {
 }
 
 export async function getSubstitutionsByIngredientId(from: string) {
+  const supabase = await createClient();
+
   return supabase
     .from('substitutions')
     .select(

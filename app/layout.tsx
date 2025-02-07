@@ -1,4 +1,6 @@
+import { Footer } from '@/components/Footer';
 import { Navbar } from '@/components/Navbar';
+import { Toaster } from '@/components/ui/sonner';
 import { baseMetadata } from '@/lib/metadata';
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -24,6 +26,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
 };
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,8 +36,12 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}>
         <Providers>
-          <Navbar />
-          <main>{children}</main>
+          <div className="flex min-h-screen flex-col">
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+          <Toaster position="top-center" />
         </Providers>
       </body>
     </html>

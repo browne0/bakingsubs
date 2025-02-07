@@ -1,30 +1,31 @@
-import { supabase } from '@/utils/supabase/client';
+import {
+  searchIngredients,
+  searchIngredientsWithSubstitutions,
+} from '@/app/services/ingredientService';
+import { createClient } from '@/app/utils/supabase/server';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const query = searchParams.get('query');
+  try {
+    const { searchParams } = new URL(request.url);
+    const query = searchParams.get('query') || '';
+    const withSubstitutions = searchParams.get('withSubstitutions') === 'true';
 
-  let ingredientsQuery = supabase
-    .from('ingredients')
-    .select('id, name, category, dietary_flags, functions')
-    .order('name');
+    const data = withSubstitutions
+      ? await searchIngredientsWithSubstitutions(query)
+      : await searchIngredients(query);
 
-  if (query) {
-    ingredientsQuery = ingredientsQuery.ilike('name', `%${query}%`);
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('Error searching ingredients:', error);
+    return NextResponse.json({ error: 'Failed to search ingredients' }, { status: 500 });
   }
-
-  const { data, error } = await ingredientsQuery;
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json(data);
 }
 
 export async function POST(request: Request) {
   const { ingredientId } = await request.json();
+
+  const supabase = await createClient();
 
   const { error } = await supabase.rpc('increment_search_count', {
     ingredient_id: ingredientId,
