@@ -40,7 +40,9 @@ const schema = z.object({
   ingredientName: z.string().min(1, 'Please select an ingredient'),
   substitutions: z.array(
     z.object({
-      name: z.string().min(2, 'Please give this substitution a name'),
+      name: z.string(),
+      amount: z.number(),
+      unit: z.string() as z.ZodType<Database['public']['Enums']['unit_type']>,
       ingredients: z
         .array(
           z.object({
@@ -57,7 +59,9 @@ const schema = z.object({
         flavor: z.string().optional(),
         structure: z.string().optional(),
       }),
-      bestFor: z.array(z.string()).min(1, 'Select at least one use case'),
+      bestFor: z
+        .array(z.string() as z.ZodType<Database['public']['Enums']['substitution_best_for']>)
+        .min(1, 'Select at least one use case'),
     })
   ),
 });
@@ -79,6 +83,8 @@ export function AddSubstitutionsForm({ onBack }: Props) {
       substitutions: [
         {
           name: '',
+          amount: 1,
+          unit: 'cup',
           ingredients: [],
           rating: 3,
           effects: {},
@@ -135,23 +141,22 @@ export function AddSubstitutionsForm({ onBack }: Props) {
       setIsSubmitting(true);
       form.clearErrors();
 
+      const substitutions = data.substitutions.map((sub) => ({
+        name: sub.name,
+        rating: sub.rating,
+        amount: sub.amount,
+        unit: sub.unit,
+        bestFor: sub.bestFor,
+        effects: sub.effects,
+        ingredients: sub.ingredients,
+      }));
+
       const response = await fetch('/api/admin/substitutions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fromIngredientId: slugify(data.ingredientName),
-          substitutions: data.substitutions.map((sub) => ({
-            toIngredients: sub.ingredients.map((ing) => ({
-              ingredientId: slugify(ing.ingredientName),
-              amount: ing.amount,
-              unit: ing.unit,
-              notes: ing.notes,
-            })),
-            name: `${data.ingredientName} to ${sub.ingredients.map((i) => i.ingredientName).join(' + ')}`,
-            rating: sub.rating,
-            bestFor: sub.bestFor,
-            effects: sub.effects,
-          })),
+          substitutions,
         }),
       });
 
@@ -222,6 +227,8 @@ export function AddSubstitutionsForm({ onBack }: Props) {
                     onClick={() =>
                       append({
                         name: '',
+                        amount: 1,
+                        unit: 'cup',
                         ingredients: [],
                         rating: 3,
                         effects: {},

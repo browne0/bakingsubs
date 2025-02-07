@@ -10,9 +10,22 @@ export async function POST(request: Request) {
       substitutions: AddSubstitutionFormValues['substitutions'];
     } = await request.json();
 
+    // Validate the incoming data
+    if (!data.fromIngredientId || !data.substitutions?.length) {
+      return NextResponse.json(
+        { error: 'Invalid request data: missing required fields' },
+        { status: 400 }
+      );
+    }
+
     // Handle multiple substitutions
     const results = await Promise.all(
       data.substitutions.map(async (sub) => {
+        // Validate each substitution has required fields
+        if (!sub.ingredients?.length) {
+          throw new Error(`Invalid substitution data: missing ingredients for "${sub.name}"`);
+        }
+
         return await createSubstitution(
           data.fromIngredientId,
           sub.ingredients.map((ing) => ({
@@ -23,6 +36,8 @@ export async function POST(request: Request) {
           })),
           {
             name: sub.name,
+            amount: sub.amount,
+            unit: sub.unit,
             rating: sub.rating,
             effects: sub.effects,
             best_for: sub.bestFor,
@@ -35,7 +50,10 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error creating substitution:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to create substitution' },
+      {
+        error: error instanceof Error ? error.message : 'Failed to create substitution',
+        details: error instanceof Error ? error.stack : undefined,
+      },
       { status: 500 }
     );
   }

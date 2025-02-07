@@ -107,20 +107,17 @@ export type Database = {
           allergens: string[]
           amount: number
           baking_tips: string[] | null
-          best_for: string[]
+          best_for: Database["public"]["Enums"]["substitution_best_for"][]
           common_uses: string[] | null
           created_at: string
           dietary_flags: string[]
           effects: Json | null
-          flavor_effects: string[] | null
           id: string
           name: string
           notes: string | null
           original_ingredient_id: string
           rating: number
-          structure_effects: string[] | null
-          texture_effects: string[] | null
-          time_adjustments: Json
+          rating_count: number | null
           unit: Database["public"]["Enums"]["unit_type"]
           updated_at: string
         }
@@ -128,20 +125,17 @@ export type Database = {
           allergens?: string[]
           amount?: number
           baking_tips?: string[] | null
-          best_for: string[]
+          best_for: Database["public"]["Enums"]["substitution_best_for"][]
           common_uses?: string[] | null
           created_at?: string
           dietary_flags: string[]
           effects?: Json | null
-          flavor_effects?: string[] | null
           id: string
           name?: string
           notes?: string | null
           original_ingredient_id: string
           rating: number
-          structure_effects?: string[] | null
-          texture_effects?: string[] | null
-          time_adjustments?: Json
+          rating_count?: number | null
           unit?: Database["public"]["Enums"]["unit_type"]
           updated_at?: string
         }
@@ -149,20 +143,17 @@ export type Database = {
           allergens?: string[]
           amount?: number
           baking_tips?: string[] | null
-          best_for?: string[]
+          best_for?: Database["public"]["Enums"]["substitution_best_for"][]
           common_uses?: string[] | null
           created_at?: string
           dietary_flags?: string[]
           effects?: Json | null
-          flavor_effects?: string[] | null
           id?: string
           name?: string
           notes?: string | null
           original_ingredient_id?: string
           rating?: number
-          structure_effects?: string[] | null
-          texture_effects?: string[] | null
-          time_adjustments?: Json
+          rating_count?: number | null
           unit?: Database["public"]["Enums"]["unit_type"]
           updated_at?: string
         }
@@ -246,6 +237,13 @@ export type Database = {
       }
     }
     Enums: {
+      substitution_best_for:
+        | "cookies"
+        | "muffins"
+        | "pie_crusts"
+        | "breads"
+        | "cakes"
+        | "pastries"
       unit_type: "g" | "ml" | "cup" | "tbsp" | "tsp"
     }
     CompositeTypes: {

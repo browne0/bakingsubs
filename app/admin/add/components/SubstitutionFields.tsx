@@ -99,6 +99,52 @@ export function SubstitutionFields({ index, control, onRemove }: Props) {
         )}
       />
 
+      <div className="space-y-2">
+        <FormLabel>Amount & Unit</FormLabel>
+        <div className="flex gap-2 items-start">
+          <FormField
+            control={control}
+            name={`substitutions.${index}.amount`}
+            render={({ field }) => (
+              <FormItem className="w-24">
+                <FormControl>
+                  <Select
+                    options={COMMON_FRACTIONS}
+                    value={COMMON_FRACTIONS.find((option) => option.value === field.value)}
+                    onChange={(newValue) => field.onChange(newValue?.value)}
+                    className="react-select"
+                    classNamePrefix="react-select"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name={`substitutions.${index}.unit`}
+            render={({ field }) => (
+              <FormItem className="w-32">
+                <FormControl>
+                  <Select
+                    options={UNIT_OPTIONS}
+                    value={UNIT_OPTIONS.find((option) => option.value === field.value)}
+                    onChange={(newValue) => field.onChange(newValue?.value)}
+                    className="react-select"
+                    classNamePrefix="react-select"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <FormDescription>
+          Amount and unit of the original ingredient this substitution replaces
+        </FormDescription>
+      </div>
+
       <div className="space-y-6">
         {/* Ingredients Section */}
         <FormField

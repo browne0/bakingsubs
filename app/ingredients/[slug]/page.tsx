@@ -32,17 +32,8 @@ export default async function IngredientPage({ params }: { params: { slug: strin
       <p className="text-muted-foreground mb-8">Top substitution options</p>
 
       <div className="grid gap-6 md:grid-cols-3">
-        {substitutions.map((sub) => (
-          <SubstitutionCard
-            key={sub.id}
-            fromSlug={sub.original_ingredient_id}
-            toSlug={sub.id}
-            name={sub.name}
-            rating={sub.rating || 0}
-            bestFor={sub.best_for}
-            dietaryFlags={sub.dietary_flags}
-            effects={sub.effects as { texture?: string; flavor?: string; structure?: string }}
-          />
+        {substitutions.map((substitution) => (
+          <SubstitutionCard key={substitution.id} substitution={substitution} />
         ))}
       </div>
     </div>

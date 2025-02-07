@@ -118,27 +118,28 @@ export default function Home() {
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
             Need a Baking Substitute?
           </h1>
-          <h2 className="block text-primary text-3xl font-bold tracking-tight md:text-4xl mt-4">
-            Find Your Solution in Seconds.
+          <h2 className="block text-primary text-2xl font-medium tracking-tight md:text-3xl mt-4">
+            Science-Based Substitution Guide
           </h2>
           <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            Get instant, science-backed substitutions for any ingredient. Our community tested
-            alternatives help you keep baking, no matter what&apos;s in your pantry.
+            We analyze food science research to determine exactly how ingredients work in your
+            recipes. Get precise, tested substitutions backed by culinary expertise and scientific
+            understanding.
           </p>
 
           {/* Search Section */}
           <div className="max-w-xl mx-auto mt-10">
-            <div className="relative flex">
+            <div className="relative flex shadow-lg rounded-lg">
               {isDesktop ? (
                 <div className="relative w-full">
                   <div className="flex">
                     <div className="relative flex-1">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                      <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                       <input
                         ref={inputRef}
                         type="text"
                         placeholder="Which ingredient are you missing?"
-                        className="w-full h-14 pl-10 pr-4 text-lg rounded-r-none border border-input bg-background placeholder:text-muted-foreground"
+                        className="w-full h-16 pl-12 pr-4 text-lg rounded-l-lg border-2 border-primary bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                         onChange={(e) => debouncedQuery(e.target.value)}
                         onFocus={() => setIsOpen(true)}
                         role="combobox"
@@ -250,6 +251,9 @@ export default function Home() {
                         </div>
                       )}
                     </div>
+                    <button className="px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-r-lg">
+                      <Search className="h-5 w-5" />
+                    </button>
                   </div>
                 </div>
               ) : (

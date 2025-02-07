@@ -1,3 +1,5 @@
+import { Database } from '@/database.types';
+
 export const FUNCTION_OPTIONS = [
   { value: 'structure', label: 'Structure' },
   { value: 'binding', label: 'Binding' },
@@ -86,15 +88,18 @@ export const CATEGORY_OPTIONS = [
 ];
 
 export const UNIT_OPTIONS = [
-  { value: 'g', label: 'Grams (g)' },
-  { value: 'ml', label: 'Milliliters (ml)' },
-  { value: 'cup', label: 'Cups (cup)' },
-  { value: 'tbsp', label: 'Tablespoons (tbsp)' },
-  { value: 'tsp', label: 'Teaspoons (tsp)' },
-  { value: 'piece', label: 'Pieces (piece)' },
+  { value: 'g', label: 'g' },
+  { value: 'ml', label: 'ml' },
+  { value: 'cup', label: 'cup' },
+  { value: 'tbsp', label: 'tbsp' },
+  { value: 'tsp', label: 'tsp' },
+  { value: 'piece', label: 'piece' },
 ];
 
-export const BEST_FOR_OPTIONS = [
+export const BEST_FOR_OPTIONS: Array<{
+  value: Database['public']['Enums']['substitution_best_for'];
+  label: string;
+}> = [
   { value: 'cookies', label: 'Cookies' },
   { value: 'cakes', label: 'Cakes' },
   { value: 'breads', label: 'Breads' },
