@@ -37,7 +37,7 @@ const steps = [
 ] as const;
 
 const schema = z.object({
-  ingredientName: z.string().min(1, 'Please select an ingredient'),
+  ingredientName: z.string(),
   substitutions: z.array(
     z.object({
       name: z.string(),
@@ -46,7 +46,7 @@ const schema = z.object({
       ingredients: z
         .array(
           z.object({
-            ingredientName: z.string().min(2, 'Name must be at least 2 characters'),
+            ingredientName: z.string(),
             amount: z.number().min(0, 'Amount must be positive'),
             unit: z.string() as z.ZodType<Database['public']['Enums']['unit_type']>,
             notes: z.string().optional(),

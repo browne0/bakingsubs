@@ -1,10 +1,10 @@
-import { getSubstitutionByIngredientId } from '@/app/services/substitutionService';
+import { getSubstitutionById } from '@/app/services/substitutionService';
 import { decimalToFraction } from '@/app/utils/fractions';
 import { BreadcrumbNav } from '@/components/BreadcrumbNav';
 import { RateSubstitution } from '@/components/RateSubstitution';
 import { StarRating } from '@/components/StarRating';
 import { UseCases } from '@/components/UseCases';
-import { QueryData, QueryError } from '@supabase/supabase-js';
+import { QueryData } from '@supabase/supabase-js';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -24,6 +24,10 @@ interface SubstitutionEffects {
   structure?: string;
 }
 
+interface ErrorResponse {
+  error: string;
+}
+
 interface Props {
   params: Promise<{
     from: string;
@@ -33,25 +37,26 @@ interface Props {
 
 async function getSubstitution(
   id: string
-): Promise<QueryData<ReturnType<typeof getSubstitutionByIngredientId>> | QueryError> {
+): Promise<QueryData<ReturnType<typeof getSubstitutionById>> | ErrorResponse> {
   const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/substitutions/${id}`, {
     next: { tags: ['substitution'] },
   });
 
+  const data = await response.json();
+
   if (!response.ok) {
-    const errorData: QueryError = await response.json();
-    return errorData;
+    return data as ErrorResponse;
   }
 
-  return response.json();
+  return data;
 }
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { from } = await params;
-  const substitution = await getSubstitution(from);
+  const { to } = await params;
+  const substitution = await getSubstitution(to);
 
-  if (!substitution || 'code' in substitution) {
+  if (!substitution || 'code' in substitution || 'error' in substitution) {
     return {
       title: 'Substitution Not Found',
     };
@@ -80,14 +85,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function SubstitutionPage({ params }: Props) {
-  const { from } = await params;
-  const substitution = await getSubstitution(from);
+  const { to } = await params;
+  const substitution = await getSubstitution(to);
 
-  if (!substitution || 'code' in substitution) {
-    notFound();
+  if ('error' in substitution) {
+    if (substitution.error === 'Substitution not found') {
+      notFound();
+    }
+    throw new Error(substitution.error);
   }
 
-  console.log(substitution.rating_count);
+  console.log(substitution);
   const sections = [
     { id: 'effects', label: 'Effects' },
     { id: 'uses', label: 'Best Uses' },
@@ -213,7 +221,7 @@ export default async function SubstitutionPage({ params }: Props) {
                     <>
                       {(substitution.effects as SubstitutionEffects).flavor && (
                         <div className="max-w-3xl">
-                          <div className="border-l-4 border-primary pl-6">
+                          <div className="border-primary ">
                             <h3 className="text-xl font-medium mb-4">Flavor Impact</h3>
                             <p className="text-lg leading-relaxed text-muted-foreground">
                               {(substitution.effects as SubstitutionEffects).flavor}
@@ -224,7 +232,7 @@ export default async function SubstitutionPage({ params }: Props) {
 
                       {(substitution.effects as SubstitutionEffects).texture && (
                         <div className="max-w-3xl">
-                          <div className="border-l-4 border-primary pl-6">
+                          <div className="border-primary ">
                             <h3 className="text-xl font-medium mb-4">Texture Changes</h3>
                             <p className="text-lg leading-relaxed text-muted-foreground">
                               {(substitution.effects as SubstitutionEffects).texture}
@@ -235,7 +243,7 @@ export default async function SubstitutionPage({ params }: Props) {
 
                       {(substitution.effects as SubstitutionEffects).structure && (
                         <div className="max-w-3xl">
-                          <div className="border-l-4 border-primary pl-6">
+                          <div className="border-primary ">
                             <h3 className="text-xl font-medium mb-4">Structural Effects</h3>
                             <p className="text-lg leading-relaxed text-muted-foreground">
                               {(substitution.effects as SubstitutionEffects).structure}

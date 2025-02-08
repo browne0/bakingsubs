@@ -1,10 +1,11 @@
-import { getSubstitutionByIngredientId } from '@/app/services/substitutionService';
+import { getSubstitutionById } from '@/app/services/substitutionService';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const { id } = await params;
   try {
-    const { data: substitution, error } = await getSubstitutionByIngredientId(id);
+    const { data: substitution, error } = await getSubstitutionById(id);
+    console.log('id', id);
 
     if (error || !substitution) {
       return NextResponse.json({ error: 'Substitution not found' }, { status: 404 });

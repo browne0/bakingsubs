@@ -146,3 +146,24 @@ export async function getSubstitutionsByIngredientId(from: string) {
     .eq('original_ingredient_id', from)
     .order('rating', { ascending: false });
 }
+
+export async function getSubstitutionById(substitutionId: string) {
+  const supabase = await createClient();
+
+  return supabase
+    .from('substitutions')
+    .select(
+      `
+      *,
+      from_ingredient:ingredients!original_ingredient_id (*),
+      substitution_ingredients (
+        amount,
+        unit,
+        notes,
+        ingredient:ingredients!ingredient_id (*)
+      )
+    `
+    )
+    .eq('id', substitutionId)
+    .single();
+}
