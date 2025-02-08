@@ -4,7 +4,7 @@ import { BreadcrumbNav } from '@/components/BreadcrumbNav';
 import { SubstitutionCard } from '@/components/SubstitutionCard';
 import { notFound } from 'next/navigation';
 
-export default async function IngredientPage({ params }: { params: { slug: string } }) {
+export default async function IngredientPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
   const ingredient = await getIngredientBySlug(slug);
