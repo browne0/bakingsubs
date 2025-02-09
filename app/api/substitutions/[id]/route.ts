@@ -5,7 +5,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   const { id } = await params;
   try {
     const { data: substitution, error } = await getSubstitutionById(id);
-    console.log('id', id);
 
     if (error || !substitution) {
       return NextResponse.json({ error: 'Substitution not found' }, { status: 404 });

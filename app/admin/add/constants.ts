@@ -93,7 +93,11 @@ export const UNIT_OPTIONS = [
   { value: 'cup', label: 'cup' },
   { value: 'tbsp', label: 'tbsp' },
   { value: 'tsp', label: 'tsp' },
+  { value: 'oz', label: 'oz' },
+  { value: 'pint', label: 'pint' },
+  { value: 'quart', label: 'quart' },
   { value: 'piece', label: 'piece' },
+  { value: 'fl oz', label: 'fl oz' },
 ];
 
 export const BEST_FOR_OPTIONS: Array<{
@@ -106,12 +110,4 @@ export const BEST_FOR_OPTIONS: Array<{
   { value: 'pastries', label: 'Pastries' },
   { value: 'muffins', label: 'Muffins' },
   { value: 'pie_crusts', label: 'Pie Crusts' },
-];
-
-export const RATING_OPTIONS = [
-  { value: 1, label: '1 - Poor' },
-  { value: 2, label: '2 - Fair' },
-  { value: 3, label: '3 - Good' },
-  { value: 4, label: '4 - Very Good' },
-  { value: 5, label: '5 - Excellent' },
 ];

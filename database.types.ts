@@ -12,44 +12,65 @@ export type Database = {
       ingredients: {
         Row: {
           allergens: string[] | null
+          calories: number | null
+          carbohydrates: number | null
           category: string | null
           common_in: string[] | null
           created_at: string
           default_unit: string | null
           dietary_flags: string[] | null
+          fat: number | null
+          fiber: number | null
           functions: string[] | null
           id: string
           name: string
           notes: string | null
+          protein: number | null
           search_count: number | null
+          sodium: number | null
+          sugar: number | null
           updated_at: string
         }
         Insert: {
           allergens?: string[] | null
+          calories?: number | null
+          carbohydrates?: number | null
           category?: string | null
           common_in?: string[] | null
           created_at?: string
           default_unit?: string | null
           dietary_flags?: string[] | null
+          fat?: number | null
+          fiber?: number | null
           functions?: string[] | null
           id: string
           name: string
           notes?: string | null
+          protein?: number | null
           search_count?: number | null
+          sodium?: number | null
+          sugar?: number | null
           updated_at?: string
         }
         Update: {
           allergens?: string[] | null
+          calories?: number | null
+          carbohydrates?: number | null
           category?: string | null
           common_in?: string[] | null
           created_at?: string
           default_unit?: string | null
           dietary_flags?: string[] | null
+          fat?: number | null
+          fiber?: number | null
           functions?: string[] | null
           id?: string
           name?: string
           notes?: string | null
+          protein?: number | null
           search_count?: number | null
+          sodium?: number | null
+          sugar?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -244,7 +265,17 @@ export type Database = {
         | "breads"
         | "cakes"
         | "pastries"
-      unit_type: "g" | "ml" | "cup" | "tbsp" | "tsp"
+      unit_type:
+        | "g"
+        | "ml"
+        | "cup"
+        | "tbsp"
+        | "tsp"
+        | "oz"
+        | "pint"
+        | "quart"
+        | "piece"
+        | "fl oz"
     }
     CompositeTypes: {
       [_ in never]: never

@@ -1,5 +1,6 @@
 'use client';
 
+import { CATEGORY_OPTIONS } from '@/app/admin/add/constants';
 import { BreadcrumbNav } from '@/components/BreadcrumbNav';
 import { Input } from '@/components/ui/input';
 import { Tables } from '@/database.types';
@@ -74,7 +75,10 @@ export default function IngredientsPage() {
             >
               <h3 className="font-medium mb-2">{ingredient.name}</h3>
               {ingredient.category && (
-                <p className="text-sm text-muted-foreground">{ingredient.category}</p>
+                <p className="text-sm text-muted-foreground">
+                  {CATEGORY_OPTIONS.find((cat) => cat.value === ingredient.category)?.label ||
+                    ingredient.category}
+                </p>
               )}
             </div>
           ))}

@@ -1,10 +1,28 @@
 import { slugify } from '@/app/utils/slugify';
 import { Tables, TablesInsert } from '@/database.types';
 import { createClient } from '../utils/supabase/server';
+import { getNutritionInfo } from './nutritionService';
 type IngredientInsert = TablesInsert<'ingredients'>;
 
 export async function createIngredient(data: Omit<IngredientInsert, 'id' | 'search_count'>) {
   const slug = slugify(data.name);
+
+  // Fetch nutrition information
+  let nutritionInfo;
+  try {
+    nutritionInfo = await getNutritionInfo(data.name);
+  } catch (error) {
+    console.error('Error fetching nutrition info:', error);
+    nutritionInfo = {
+      fat: null,
+      calories: null,
+      sugar: null,
+      sodium: null,
+      fiber: null,
+      protein: null,
+      carbohydrates: null,
+    };
+  }
 
   const supabase = await createClient();
 
@@ -21,6 +39,7 @@ export async function createIngredient(data: Omit<IngredientInsert, 'id' | 'sear
       default_unit: data.default_unit,
       notes: data.notes,
       search_count: 0,
+      ...nutritionInfo,
     })
     .select()
     .single();

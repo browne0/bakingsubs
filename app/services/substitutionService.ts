@@ -155,7 +155,15 @@ export async function getSubstitutionById(substitutionId: string) {
     .select(
       `
       *,
-      from_ingredient:ingredients!original_ingredient_id (*),
+      from_ingredient:ingredients!original_ingredient_id (
+        *,
+        calories,
+        fat,
+        carbohydrates,
+        protein,
+        sodium,
+        fiber
+      ),
       substitution_ingredients (
         amount,
         unit,
