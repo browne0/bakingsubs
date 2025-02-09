@@ -14,6 +14,8 @@ export const COMMON_IN_OPTIONS = [
   { value: 'cakes', label: 'Cakes' },
   { value: 'breads', label: 'Breads' },
   { value: 'pastries', label: 'Pastries' },
+  { value: 'muffins', label: 'Muffins' },
+  { value: 'pie_crusts', label: 'Pie Crusts' },
   { value: 'pizza dough', label: 'Pizza Dough' },
   { value: 'quick breads', label: 'Quick Breads' },
   { value: 'gluten-free baking', label: 'Gluten-Free Baking' },
