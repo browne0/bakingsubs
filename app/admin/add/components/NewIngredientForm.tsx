@@ -208,6 +208,7 @@ export function NewIngredientForm({ onBack }: Props) {
                       <FormControl>
                         <Select
                           isMulti
+                          closeMenuOnSelect={false}
                           options={FUNCTION_OPTIONS}
                           value={FUNCTION_OPTIONS.filter((option) =>
                             field.value?.includes(option.value)
@@ -233,6 +234,7 @@ export function NewIngredientForm({ onBack }: Props) {
                       <FormControl>
                         <Select
                           isMulti
+                          closeMenuOnSelect={false}
                           options={COMMON_IN_OPTIONS}
                           value={COMMON_IN_OPTIONS.filter((option) =>
                             field.value?.includes(option.value)
@@ -258,6 +260,7 @@ export function NewIngredientForm({ onBack }: Props) {
                       <FormControl>
                         <Select
                           isMulti
+                          closeMenuOnSelect={false}
                           options={DIETARY_FLAGS_OPTIONS}
                           value={DIETARY_FLAGS_OPTIONS.filter((option) =>
                             field.value?.includes(option.value)
@@ -283,6 +286,7 @@ export function NewIngredientForm({ onBack }: Props) {
                       <FormControl>
                         <Select
                           isMulti
+                          closeMenuOnSelect={false}
                           options={ALLERGENS_OPTIONS}
                           value={ALLERGENS_OPTIONS.filter((option) =>
                             field.value?.includes(option.value)

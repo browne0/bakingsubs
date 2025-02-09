@@ -379,6 +379,7 @@ export function SubstitutionFields({ index, control, onRemove }: Props) {
               <FormControl>
                 <Select
                   isMulti
+                  closeMenuOnSelect={false}
                   options={BEST_FOR_OPTIONS}
                   value={BEST_FOR_OPTIONS.filter((option) => field.value?.includes(option.value))}
                   onChange={(newValue) => field.onChange(newValue.map((item) => item.value))}
