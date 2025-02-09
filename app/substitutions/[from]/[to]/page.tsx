@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `Substitute ${substitution.from_ingredient.name} with ${substitution.name} - Baking Guide`,
+    title: `Substitute ${substitution.from_ingredient.name} with ${substitution.name}`,
     description: `Learn how to substitute ${substitution.from_ingredient.name} with ${substitution.substitution_ingredients
       .map((si) => si.ingredient.name)
       .join(' + ')} in your baking, including its ${
