@@ -18,7 +18,9 @@ export function SubstitutionCard({ substitution }: SubstitutionCardProps) {
     <Card
       className="group flex h-full cursor-pointer flex-col border border-border/50 bg-card transition-all hover:border-border hover:bg-accent/5"
       onClick={() =>
-        router.push(`/substitutions/${substitution.original_ingredient_id}/${substitution.id}`)
+        router.push(
+          `/ingredients/${substitution.original_ingredient_id}/substitutions/${substitution.id}`
+        )
       }
     >
       <CardContent className="space-y-3 p-6">

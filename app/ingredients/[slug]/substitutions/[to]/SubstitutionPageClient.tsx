@@ -124,14 +124,17 @@ export function SubstitutionPageClient({ substitution }: SubstitutionPageClientP
           <BreadcrumbNav
             items={[
               { label: 'Home', href: '/' },
+              { label: 'Ingredients', href: '/ingredients' },
               {
-                label: `${substitution.from_ingredient.name} Substitutions`,
+                label: substitution.from_ingredient.name,
                 href: `/ingredients/${substitution.from_ingredient.id}`,
               },
               {
-                label: substitution.substitution_ingredients
-                  .map((si: SubstitutionIngredient) => si.ingredient.name)
-                  .join(' + '),
+                label: 'Substitutions',
+                href: `/ingredients/${substitution.from_ingredient.id}/substitutions`,
+              },
+              {
+                label: substitution.name,
               },
             ]}
           />

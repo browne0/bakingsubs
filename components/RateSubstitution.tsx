@@ -15,9 +15,16 @@ export function RateSubstitution({ substitutionId, currentRating }: RateSubstitu
   const [rating, setRating] = useState<number>(0);
   const [hoveredRating, setHoveredRating] = useState<number>(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasRated, setHasRated] = useState(() => {
+    // Check localStorage on component mount
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(`rated-${substitutionId}`) === 'true';
+    }
+    return false;
+  });
 
   const handleRatingSubmit = async () => {
-    if (rating === 0) return;
+    if (rating === 0 || hasRated) return;
 
     setIsSubmitting(true);
     try {
@@ -34,6 +41,9 @@ export function RateSubstitution({ substitutionId, currentRating }: RateSubstitu
 
       if (!response.ok) throw new Error('Failed to submit rating');
 
+      // Store rating status in localStorage
+      localStorage.setItem(`rated-${substitutionId}`, 'true');
+      setHasRated(true);
       toast.success('Thank you for rating!');
     } catch (_error) {
       toast.error('Error submitting rating');
@@ -41,6 +51,21 @@ export function RateSubstitution({ substitutionId, currentRating }: RateSubstitu
       setIsSubmitting(false);
     }
   };
+
+  if (hasRated) {
+    return (
+      <div className="border-t pt-8">
+        <div className="max-w-2xl mx-auto text-center">
+          <p className="text-muted-foreground">Thank you for rating this substitution!</p>
+          {currentRating && (
+            <p className="text-sm text-muted-foreground pt-2">
+              Current community rating: {currentRating.toFixed(1)} / 5
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="border-t pt-8">

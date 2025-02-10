@@ -59,7 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic routes for substitutions
   const substitutionRoutes = (substitutions ?? []).map((sub) => ({
-    url: `${baseUrl}/substitutions/${sub.original_ingredient_id}/${sub.id}`,
+    url: `${baseUrl}/ingredients/${sub.original_ingredient_id}/substitutions/${sub.id}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.6,
