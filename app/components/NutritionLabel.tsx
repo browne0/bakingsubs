@@ -208,7 +208,7 @@ export function NutritionLabel({
       </div>
 
       <div className="border-b-4 border-black py-2">
-        <div className="text-2xl font-black">
+        <div className="text-xl flex justify-between font-black">
           <span>Calories</span> <span>{formatNumber(adjustedNutrition.calories)}</span>
         </div>
       </div>
