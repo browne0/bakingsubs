@@ -135,7 +135,7 @@ export function NewIngredientForm({ onBack }: Props) {
         throw new Error(error.error || 'Failed to save');
       }
 
-      toast.success('Ingredient added successfully');
+      toast.success(`${data.name} added successfully`);
       form.reset();
       setCurrentStep(0);
     } catch (error) {

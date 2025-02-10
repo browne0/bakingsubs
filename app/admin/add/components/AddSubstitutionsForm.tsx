@@ -165,7 +165,7 @@ export function AddSubstitutionsForm({ onBack }: Props) {
         throw new Error(error.error || 'Failed to save');
       }
 
-      toast.success('Substitutions added successfully');
+      toast.success(`Substitutions for ${data.ingredientName} added successfully`);
       form.reset();
       setCurrentStep(0);
     } catch (error) {
