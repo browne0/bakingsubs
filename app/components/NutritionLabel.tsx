@@ -109,13 +109,13 @@ export function NutritionLabel({
         <div className="border-b-8 border-black py-1">
           <div className="text-sm flex justify-between">
             <div className="font-bold">Serving size</div>
-            <div className="font-bold">{formatNumber(totalGrams)}g</div>
+            <div className="font-bold">{formatNumber(Math.ceil(totalGrams))}g</div>
           </div>
         </div>
 
         <div className="border-b-4 border-black py-2">
-          <div className="text-2xl font-black">
-            <span>Calories</span> <span>{formatNumber(combinedNutrition.calories)}</span>
+          <div className="text-xl flex justify-between font-black">
+            <span>Calories</span> <span>{formatNumber(Math.ceil(combinedNutrition.calories))}</span>
           </div>
         </div>
 

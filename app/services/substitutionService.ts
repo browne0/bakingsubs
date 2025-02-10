@@ -50,12 +50,21 @@ export async function createSubstitution(
     throw new Error('Cannot substitute an ingredient with itself');
   }
 
-  // Generate ID from the substitution name
+  // Fetch the original ingredient name
+  const { data: originalIngredient, error: originalIngredientError } = await supabase
+    .from('ingredients')
+    .select('name')
+    .eq('id', originalIngredientId)
+    .single();
+
+  if (originalIngredientError) throw originalIngredientError;
+
+  // Generate ID by combining original ingredient and substitution name
   if (!data.name) {
     throw new Error('Substitution name is required');
   }
 
-  const id = slugify(data.name);
+  const id = slugify(`${originalIngredient.name}-to-${data.name}`);
 
   // Check if substitution with this ID already exists
   const { data: existing } = await supabase

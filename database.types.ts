@@ -256,6 +256,13 @@ export type Database = {
         }
         Returns: string[]
       }
+      update_substitution_id: {
+        Args: {
+          old_id: string
+          new_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       substitution_best_for:
