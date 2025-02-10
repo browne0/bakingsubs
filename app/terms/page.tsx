@@ -11,8 +11,6 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
-      <BreadcrumbNav items={[{ label: 'Home', href: '/' }, { label: 'Terms of Service' }]} />
-
       <h1 className="text-3xl font-bold mb-8">Terms of Service</h1>
 
       <div className="prose dark:prose-invert max-w-none">
