@@ -32,14 +32,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://bakingsubs.com';
 
   // Static routes
-  const staticRoutes = ['', '/about', '/privacy', '/terms', '/ingredients', '/support'].map(
-    (route) => ({
-      url: `${baseUrl}${route}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: route === '' ? 1 : 0.8,
-    })
-  );
+  const staticRoutes = [
+    '',
+    '/about',
+    '/privacy',
+    '/terms',
+    '/blog',
+    '/guides',
+    '/faq',
+    '/ingredients',
+    '/support',
+  ].map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: route === '' ? 1 : 0.8,
+  }));
 
   // Dynamic routes for ingredients
   const ingredientRoutes = (ingredients ?? []).map((ingredient) => ({
