@@ -184,3 +184,95 @@ export async function getSubstitutionById(substitutionId: string) {
     .eq('id', substitutionId)
     .single();
 }
+
+export async function searchSubstitutions(query: string) {
+  const supabase = await createClient();
+
+  let queryBuilder = supabase
+    .from('substitutions')
+    .select(
+      `
+      *,
+      from_ingredient:ingredients!original_ingredient_id (name),
+      substitution_ingredients (
+        amount,
+        unit,
+        notes,
+        ingredient:ingredients!ingredient_id (
+          id,
+          name
+        )
+      )
+    `
+    )
+    .order('name');
+
+  if (query) {
+    queryBuilder = queryBuilder.ilike('name', `%${query}%`);
+  }
+
+  return queryBuilder;
+}
+
+export async function deleteSubstitution(id: string) {
+  const supabase = await createClient();
+
+  // First delete all substitution ingredients
+  const { error: ingredientsError } = await supabase
+    .from('substitution_ingredients')
+    .delete()
+    .eq('substitution_id', id);
+
+  if (ingredientsError) throw ingredientsError;
+
+  // Then delete the substitution itself
+  const { error: substitutionError } = await supabase.from('substitutions').delete().eq('id', id);
+
+  if (substitutionError) throw substitutionError;
+
+  // Revalidate cache
+  revalidateTag('substitution');
+}
+
+export async function updateSubstitution(id: string, data: any) {
+  const supabase = await createClient();
+
+  // First update the substitution
+  const { error: substitutionError } = await supabase
+    .from('substitutions')
+    .update({
+      name: data.name,
+      amount: data.amount,
+      unit: data.unit,
+      rating: data.rating,
+      best_for: data.bestFor,
+      effects: data.effects,
+    })
+    .eq('id', id);
+
+  if (substitutionError) throw substitutionError;
+
+  // Delete existing ingredients
+  const { error: deleteError } = await supabase
+    .from('substitution_ingredients')
+    .delete()
+    .eq('substitution_id', id);
+
+  if (deleteError) throw deleteError;
+
+  // Insert new ingredients
+  const { error: ingredientsError } = await supabase.from('substitution_ingredients').insert(
+    data.ingredients.map((ing: any) => ({
+      substitution_id: id,
+      ingredient_id: slugify(ing.ingredientName),
+      amount: ing.amount,
+      unit: ing.unit,
+      notes: ing.notes,
+    }))
+  );
+
+  if (ingredientsError) throw ingredientsError;
+
+  revalidateTag('substitution');
+  return { success: true };
+}

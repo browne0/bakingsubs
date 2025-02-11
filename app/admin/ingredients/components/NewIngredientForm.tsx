@@ -26,7 +26,9 @@ import {
   DIETARY_FLAGS_OPTIONS,
   FUNCTION_OPTIONS,
   UNIT_OPTIONS,
-} from '../constants';
+} from '../../constants';
+import { useRouter } from 'next/navigation';
+import { BreadcrumbNav } from '@/components/BreadcrumbNav';
 
 const steps = [
   {
@@ -73,14 +75,10 @@ const schema = z.object({
 
 export type NewIngredientFormValues = z.infer<typeof schema>;
 
-interface Props {
-  onBack: () => void;
-}
-
-export function NewIngredientForm({ onBack }: Props) {
+export function NewIngredientForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const router = useRouter();
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -152,6 +150,8 @@ export function NewIngredientForm({ onBack }: Props) {
 
   return (
     <div className="container max-w-4xl mx-auto py-10">
+      <BreadcrumbNav items={[{ label: 'Admin', href: '/admin' }, { label: 'New Ingredient' }]} />
+
       <div className="mb-8">
         <FormProgress steps={steps} currentStep={currentStep} progress={progress} />
       </div>
@@ -341,7 +341,7 @@ export function NewIngredientForm({ onBack }: Props) {
           </Card>
 
           <div className="flex justify-between">
-            <Button type="button" variant="outline" onClick={onBack}>
+            <Button type="button" variant="outline" onClick={() => router.push('/admin')}>
               Back to Selection
             </Button>
 

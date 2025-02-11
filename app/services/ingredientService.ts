@@ -2,6 +2,7 @@ import { slugify } from '@/app/utils/slugify';
 import { Tables, TablesInsert } from '@/database.types';
 import { createClient } from '../utils/supabase/server';
 import { getNutritionInfo } from './nutritionService';
+import { revalidateTag } from 'next/cache';
 type IngredientInsert = TablesInsert<'ingredients'>;
 
 export async function createIngredient(data: Omit<IngredientInsert, 'id' | 'search_count'>) {
@@ -117,4 +118,48 @@ export async function searchIngredients(query: string): Promise<Tables<'ingredie
 
   if (error) throw error;
   return data;
+}
+
+export async function deleteIngredient(id: string) {
+  const supabase = await createClient();
+
+  // First, delete all substitutions where this ingredient is used
+  const { error: substitutionsError } = await supabase
+    .from('substitution_ingredients')
+    .delete()
+    .eq('ingredient_id', id);
+
+  if (substitutionsError) throw substitutionsError;
+
+  // Delete substitutions where this is the original ingredient
+  const { error: originalSubstitutionsError } = await supabase
+    .from('substitutions')
+    .delete()
+    .eq('original_ingredient_id', id);
+
+  if (originalSubstitutionsError) throw originalSubstitutionsError;
+
+  // Finally, delete the ingredient itself
+  const { error: ingredientError } = await supabase.from('ingredients').delete().eq('id', id);
+
+  if (ingredientError) throw ingredientError;
+
+  // Revalidate cache
+  revalidateTag('ingredients');
+}
+
+export async function updateIngredient(id: string, data: Partial<Tables<'ingredients'>>) {
+  const supabase = await createClient();
+
+  const { data: ingredient, error } = await supabase
+    .from('ingredients')
+    .update(data)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  revalidateTag('ingredients');
+  return ingredient;
 }

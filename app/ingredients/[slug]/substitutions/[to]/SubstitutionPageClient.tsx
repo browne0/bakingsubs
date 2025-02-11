@@ -11,7 +11,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { QueryData } from '@supabase/supabase-js';
 
 interface SubstitutionPageClientProps {
-  substitution: QueryData<ReturnType<typeof getSubstitutionById>>; // Replace with your substitution type
+  substitution: QueryData<ReturnType<typeof getSubstitutionById>>;
 }
 
 interface SubstitutionIngredient {
@@ -39,8 +39,8 @@ export function SubstitutionPageClient({ substitution }: SubstitutionPageClientP
     { id: 'nutrition', label: 'Nutrition' },
   ];
 
-  // Component for dietary and allergen tags
-  const DietaryAndAllergenTags = () => (
+  // Split into two separate components
+  const DietaryTags = () => (
     <>
       {substitution.dietary_flags.length > 0 && (
         <div className="flex flex-wrap gap-2">
@@ -54,9 +54,13 @@ export function SubstitutionPageClient({ substitution }: SubstitutionPageClientP
           ))}
         </div>
       )}
+    </>
+  );
 
+  const AllergenTags = () => (
+    <>
       {substitution.allergens.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="flex flex-wrap gap-2">
           {substitution.allergens.map((allergen) => (
             <span
               key={allergen}
@@ -70,7 +74,7 @@ export function SubstitutionPageClient({ substitution }: SubstitutionPageClientP
     </>
   );
 
-  // Modified QuickInfoSection to conditionally render dietary/allergen info
+  // Update QuickInfoSection to only show dietary tags
   const QuickInfoSection = () => (
     <div className="space-y-6">
       <div className="rounded-lg border bg-card p-4 shadow-sm">
@@ -95,22 +99,11 @@ export function SubstitutionPageClient({ substitution }: SubstitutionPageClientP
         ))}
       </div>
 
-      {isDesktop && (
-        <>
-          {substitution.dietary_flags.length > 0 && (
-            <div className="rounded-lg border bg-card p-4 shadow-sm">
-              <h2 className="font-medium mb-3">Dietary Information</h2>
-              <DietaryAndAllergenTags />
-            </div>
-          )}
-
-          {substitution.allergens.length > 0 && (
-            <div className="rounded-lg border bg-card p-4 shadow-sm">
-              <h2 className="font-medium mb-3">Allergen Information</h2>
-              <DietaryAndAllergenTags />
-            </div>
-          )}
-        </>
+      {isDesktop && substitution.dietary_flags.length > 0 && (
+        <div className="rounded-lg border bg-card p-4 shadow-sm">
+          <h2 className="font-medium mb-3">Dietary Information</h2>
+          <DietaryTags />
+        </div>
       )}
     </div>
   );
@@ -153,7 +146,8 @@ export function SubstitutionPageClient({ substitution }: SubstitutionPageClientP
                 </span>
               </div>
 
-              {!isDesktop && <DietaryAndAllergenTags />}
+              {!isDesktop && <DietaryTags />}
+              <AllergenTags />
             </div>
           </div>
         </div>

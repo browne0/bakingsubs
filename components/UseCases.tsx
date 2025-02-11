@@ -1,4 +1,4 @@
-import { BEST_FOR_OPTIONS, COMMON_IN_OPTIONS } from '@/app/admin/add/constants';
+import { BEST_FOR_OPTIONS, COMMON_IN_OPTIONS } from '@/app/admin/constants';
 import { Cake, Check, Cookie, Croissant, Pizza, Wheat } from 'lucide-react';
 
 interface UseCasesProps {

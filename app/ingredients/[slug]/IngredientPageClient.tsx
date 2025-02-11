@@ -6,7 +6,7 @@ import {
   COMMON_IN_OPTIONS,
   DIETARY_FLAGS_OPTIONS,
   FUNCTION_OPTIONS,
-} from '@/app/admin/add/constants';
+} from '@/app/admin/constants';
 import { NutritionLabel } from '@/app/components/NutritionLabel';
 import { BreadcrumbNav } from '@/components/BreadcrumbNav';
 import { SubstitutionCard } from '@/components/SubstitutionCard';
