@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/table';
 import { Tables } from '@/database.types';
 import { useQuery } from '@tanstack/react-query';
-import { MoreHorizontal, Plus, Search, Trash } from 'lucide-react';
+import { MoreHorizontal, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import {
