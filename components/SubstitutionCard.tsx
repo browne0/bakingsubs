@@ -1,6 +1,6 @@
 'use client';
 
-import { BEST_FOR_OPTIONS } from '@/app/admin/add/constants';
+import { BEST_FOR_OPTIONS } from '@/app/admin/constants';
 import { Badge } from '@/components/ui/badge';
 import { Tables } from '@/database.types';
 import { StarFilledIcon, StarIcon } from '@radix-ui/react-icons';

@@ -1,52 +1,42 @@
-import { AddSubstitutionFormValues } from '@/app/admin/add/components/AddSubstitutionsForm';
 import { createSubstitution } from '@/app/services/substitutionService';
 import { slugify } from '@/app/utils/slugify';
 import { NextResponse } from 'next/server';
+import { SubstitutionFormValues } from '@/app/admin/substitutions/schema';
 
 export async function POST(request: Request) {
   try {
-    const data: {
-      fromIngredientId: string;
-      substitutions: AddSubstitutionFormValues['substitutions'];
-    } = await request.json();
+    const data = await request.json();
 
     // Validate the incoming data
-    if (!data.fromIngredientId || !data.substitutions?.length) {
+    if (!data.fromIngredientId || !data.ingredients?.length) {
       return NextResponse.json(
         { error: 'Invalid request data: missing required fields' },
         { status: 400 }
       );
     }
 
-    // Handle multiple substitutions
-    const results = await Promise.all(
-      data.substitutions.map(async (sub) => {
-        // Validate each substitution has required fields
-        if (!sub.ingredients?.length) {
-          throw new Error(`Invalid substitution data: missing ingredients for "${sub.name}"`);
-        }
-
-        return await createSubstitution(
-          data.fromIngredientId,
-          sub.ingredients.map((ing) => ({
-            ingredientId: slugify(ing.ingredientName),
-            amount: ing.amount,
-            unit: ing.unit,
-            notes: ing.notes,
-          })),
-          {
-            name: sub.name,
-            amount: sub.amount,
-            unit: sub.unit,
-            rating: sub.rating,
-            effects: sub.effects,
-            best_for: sub.bestFor,
-          }
-        );
-      })
+    // Create single substitution
+    const result = await createSubstitution(
+      data.fromIngredientId,
+      data.ingredients.map(
+        (ing: { ingredientName: string; amount: number; unit: string; notes?: string }) => ({
+          ingredientId: slugify(ing.ingredientName),
+          amount: ing.amount,
+          unit: ing.unit,
+          notes: ing.notes,
+        })
+      ),
+      {
+        name: data.name,
+        amount: data.amount,
+        unit: data.unit,
+        rating: data.rating,
+        effects: data.effects,
+        best_for: data.bestFor,
+      }
     );
 
-    return NextResponse.json({ success: true, data: results });
+    return NextResponse.json({ success: true, data: result });
   } catch (error) {
     console.error('Error creating substitution:', error);
     return NextResponse.json(
