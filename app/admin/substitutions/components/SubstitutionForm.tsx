@@ -31,6 +31,7 @@ import {
 import { Plus, Trash2 } from 'lucide-react';
 import { SubstitutionFormValues, substitutionSchema } from '../schema';
 import { COMMON_FRACTIONS } from '@/app/utils/fractions';
+import { slugify } from '@/app/utils/slugify';
 
 interface SubstitutionFormProps {
   initialData?: SubstitutionFormValues;
@@ -83,18 +84,19 @@ export function SubstitutionForm({ initialData, mode, id }: SubstitutionFormProp
         body: JSON.stringify(
           mode === 'create'
             ? {
-                fromIngredientId: data.ingredientName,
-                substitutions: [
-                  {
-                    name: data.name,
-                    amount: data.amount,
-                    unit: data.unit,
-                    rating: data.rating,
-                    effects: data.effects,
-                    bestFor: data.bestFor,
-                    ingredients: data.ingredients,
-                  },
-                ],
+                fromIngredientId: slugify(data.ingredientName),
+                name: data.name,
+                amount: data.amount,
+                unit: data.unit,
+                rating: data.rating,
+                effects: data.effects,
+                bestFor: data.bestFor,
+                ingredients: data.ingredients.map((ing) => ({
+                  ingredientName: ing.ingredientName,
+                  amount: ing.amount,
+                  unit: ing.unit,
+                  notes: ing.notes,
+                })),
               }
             : data
         ),
