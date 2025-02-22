@@ -13,7 +13,7 @@ export function Navbar() {
     <header className="border-b">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center">
-          <Image src={Logo} alt="BakingSubs Logo" className="h-8 w-auto" priority unoptimized />
+          <Image src={Logo} alt="BakingSubs Logo" className="h-8 w-auto" unoptimized />
         </Link>
 
         {/* Desktop Navigation */}
@@ -23,6 +23,12 @@ export function Navbar() {
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             About
+          </Link>
+          <Link
+            href="/learn"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Learn
           </Link>
           <Link
             href="/ingredients"
