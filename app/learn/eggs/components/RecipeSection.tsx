@@ -35,7 +35,7 @@ const recipes = [
 
 export default function RecipeSection() {
   return (
-    <section id="recipes" className="py-12">
+    <section id="recipes" className="py-6">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
           Tested Recipes Using Egg Substitutes

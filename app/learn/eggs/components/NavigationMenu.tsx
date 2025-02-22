@@ -5,11 +5,11 @@ import { useEffect, useState } from 'react';
 
 const navItems = [
   { id: 'start', label: 'Start Here' },
+  { id: 'science', label: 'The Science' },
   { id: 'substitutes', label: 'Common Substitutes' },
   { id: 'how-to', label: 'How To' },
-  { id: 'faq', label: 'FAQ' },
-  { id: 'science', label: 'The Science' },
   { id: 'recipes', label: 'Recipes' },
+  { id: 'faq', label: 'FAQ' },
 ];
 
 export default function NavigationMenu() {
@@ -17,12 +17,11 @@ export default function NavigationMenu() {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Only handle active section updates
       const sections = navItems.map((item) => document.getElementById(item.id));
       const currentSection = sections.find((section) => {
         if (!section) return false;
         const rect = section.getBoundingClientRect();
-        return rect.top <= 76 && rect.bottom >= 76; // Adjust threshold as needed
+        return rect.top <= 56 && rect.bottom >= 56;
       });
 
       if (currentSection) {
@@ -34,19 +33,14 @@ export default function NavigationMenu() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    element?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
     <nav className="sticky top-0 bg-white dark:bg-gray-900 w-full z-30 shadow-md">
       <div className="container mx-auto px-4">
         <ul className="flex overflow-x-auto whitespace-nowrap md:justify-between py-4 gap-6 md:gap-8">
           {navItems.map((item) => (
             <li key={item.id}>
-              <button
-                onClick={() => scrollToSection(item.id)}
+              <a
+                href={`#${item.id}`}
                 className={cn(
                   'text-sm md:text-base font-medium transition-colors font-bold uppercase',
                   activeSection === item.id
@@ -55,7 +49,7 @@ export default function NavigationMenu() {
                 )}
               >
                 {item.label}
-              </button>
+              </a>
             </li>
           ))}
         </ul>

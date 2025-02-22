@@ -3,7 +3,6 @@ import FaqSection from './components/FaqSection';
 import HeroSection from './components/HeroSection';
 import HowToSection from './components/HowToSection';
 import NavigationMenu from './components/NavigationMenu';
-import RecipeSection from './components/RecipeSection';
 import RelatedContent from './components/RelatedContent';
 import ScienceSection from './components/ScienceSection';
 import StartHereSection from './components/StartHereSection';
@@ -22,11 +21,11 @@ export default function EggSubstitutionsHub() {
       <NavigationMenu />
       <div className="container mx-auto px-4 py-8 space-y-16 max-w-6xl">
         <StartHereSection />
+        <ScienceSection />
         <SubstitutesGrid />
         <HowToSection />
+        {/* <RecipeSection /> */}
         <FaqSection />
-        <ScienceSection />
-        <RecipeSection />
         <RelatedContent />
       </div>
     </main>

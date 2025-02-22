@@ -14,11 +14,11 @@ const startHereCards = [
     href: '/learn/eggs/choosing-substitutes',
   },
   {
-    title: 'Measuring and Conversion Guide',
+    title: 'Vegan Egg Substitutes: Complete Guide',
     description:
-      'Master the exact measurements and ratios for successful egg substitution in any recipe.',
-    icon: '📏',
-    href: '/learn/eggs/measurements',
+      'Learn the difference between all the plant-based options for replacing eggs in your baking, from flax to commercial alternatives.',
+    icon: '🌱',
+    href: '/learn/eggs/vegan-substitutes',
   },
   {
     title: 'Common Substitution Mistakes',
@@ -31,9 +31,11 @@ const startHereCards = [
 
 export default function StartHereSection() {
   return (
-    <section id="start" className="py-12">
+    <section id="start" className="py-6">
       <div>
-        <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Start Here</h2>
+        <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white text-center">
+          Start Here
+        </h2>
         <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">
           New to egg substitutions? These essential guides will help you understand the basics and
           set you up for success in your egg-free baking journey.

@@ -2,7 +2,7 @@ import { substitutes } from '../data/substitutes';
 
 export default function SubstitutesGrid() {
   return (
-    <section id="substitutes" className="py-12">
+    <section id="substitutes" className="py-6">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
           Common Egg Substitutes

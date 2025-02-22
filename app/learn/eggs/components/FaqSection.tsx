@@ -49,7 +49,7 @@ export default function FaqSection() {
   };
 
   return (
-    <section id="faq" className="py-12">
+    <section id="faq" className="py-6">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}

@@ -119,3 +119,8 @@ body {
 .react-select__placeholder {
   @apply !text-muted-foreground;
 }
+
+.learn-layout {
+  scroll-behavior: smooth;
+  scroll-padding-top: 56px; /* Account for sticky header */
+}

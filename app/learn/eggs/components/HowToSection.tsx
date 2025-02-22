@@ -24,7 +24,7 @@ const howToGuides = [
 
 export default function HowToSection() {
   return (
-    <section id="how-to" className="py-12">
+    <section id="how-to" className="py-6">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
           How To Use Egg Substitutes

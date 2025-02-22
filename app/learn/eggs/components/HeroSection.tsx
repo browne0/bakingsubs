@@ -21,15 +21,15 @@ export default function HeroSection() {
       {/* Content Overlay */}
       <div className="absolute inset-0 z-20 flex items-center">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="max-w-2xl">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Egg Substitutions in Baking
-            </h1>
-            <p className="text-lg md:text-xl text-gray-100">
-              Master the art of egg-free baking with our comprehensive guide. Whether you're vegan,
-              managing allergies, or just ran out of eggs, learn how to achieve perfect results with
-              the right substitutes.
-            </p>
+          <div className="max-w-2xl mx-auto md:mx-0 text-center md:text-left">
+            <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
+              <span className="h-[1px] w-4 border-t border-rose-500"></span>
+              <p className="text-base font-medium tracking-wider text-white uppercase">
+                HOW TO SUBSTITUTE
+              </p>
+              <span className="h-[1px] w-4 border-t border-rose-500"></span>
+            </div>
+            <h1 className="text-5xl md:text-7xl font-serif text-white">Eggs</h1>
           </div>
         </div>
       </div>

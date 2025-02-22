@@ -21,7 +21,7 @@ const relatedTopics = [
 
 export default function RelatedContent() {
   return (
-    <section className="py-12 bg-gray-50 dark:bg-gray-900/50">
+    <section className="py-6 bg-gray-50 dark:bg-gray-900/50">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
           Explore More Baking Substitutions
