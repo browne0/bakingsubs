@@ -22,15 +22,9 @@ const substitutionCategories: {
     status: 'complete' as const,
   },
   {
-    title: 'Dairy',
+    title: 'Milk',
     image: 'https://placehold.co/800x800',
-    href: '/learn/dairy',
-    status: 'coming-soon' as const,
-  },
-  {
-    title: 'Flour',
-    image: 'https://placehold.co/800x800',
-    href: '/learn/flour',
+    href: '/learn/milk',
     status: 'coming-soon' as const,
   },
   {
@@ -40,9 +34,15 @@ const substitutionCategories: {
     status: 'coming-soon' as const,
   },
   {
-    title: 'Fats',
+    title: 'Butter',
     image: 'https://placehold.co/800x800',
-    href: '/learn/fats',
+    href: '/learn/butter',
+    status: 'coming-soon' as const,
+  },
+  {
+    title: 'Flour',
+    image: 'https://placehold.co/800x800',
+    href: '/learn/flour',
     status: 'coming-soon' as const,
   },
   {
@@ -52,15 +52,15 @@ const substitutionCategories: {
     status: 'coming-soon' as const,
   },
   {
-    title: 'Nuts',
+    title: 'Oils & Fats',
     image: 'https://placehold.co/800x800',
-    href: '/learn/nuts',
+    href: '/learn/oils-fats',
     status: 'coming-soon' as const,
   },
   {
-    title: 'Chocolate',
+    title: 'Vanilla & Flavorings',
     image: 'https://placehold.co/800x800',
-    href: '/learn/chocolate',
+    href: '/learn/flavorings',
     status: 'coming-soon' as const,
   },
 ];
