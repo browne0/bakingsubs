@@ -45,7 +45,7 @@ export default function RootLayout({
           <Toaster position="top-center" />
         </Providers>
       </body>
-      <GoogleAnalytics gaId="G-P56CPTEJ67" />
+      {process.env.NODE_ENV === 'production' && <GoogleAnalytics gaId="G-P56CPTEJ67" />}
     </html>
   );
 }
