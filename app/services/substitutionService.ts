@@ -276,3 +276,30 @@ export async function updateSubstitution(id: string, data: any) {
   revalidateTag('substitution');
   return { success: true };
 }
+
+export async function getEggSubstitutions() {
+  const supabase = await createClient();
+
+  return supabase
+    .from('substitutions')
+    .select(
+      `
+      id,
+      name,
+      amount,
+      unit,
+      best_for,
+      rating,
+      description: notes,
+      substitution_ingredients (
+        amount,
+        unit,
+        notes,
+        ingredient:ingredients!ingredient_id (*)
+      )
+    `
+    )
+    .eq('original_ingredient_id', 'large-eggs')
+    .order('rating', { ascending: false })
+    .limit(6);
+}

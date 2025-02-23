@@ -1,18 +1,18 @@
 const relatedTopics = [
   {
-    title: 'Dairy Substitutions',
-    description: 'Learn how to replace milk, butter, and cream in your baking.',
+    title: 'Milk',
+    description: 'Learn how milk enriches, tenderizes, and browns your baked creations.',
     image: 'https://placehold.co/400x600',
-    href: '/learn/dairy',
+    href: '/learn/milk',
   },
   {
-    title: 'Flour Substitutions',
+    title: 'Flour',
     description: 'Discover gluten-free and alternative flour options for baking.',
     image: 'https://placehold.co/400x600',
     href: '/learn/flour',
   },
   {
-    title: 'Sugar Substitutions',
+    title: 'Sugar',
     description: 'Explore natural sweeteners and sugar alternatives.',
     image: 'https://placehold.co/400x600',
     href: '/learn/sugar',

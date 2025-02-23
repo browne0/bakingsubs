@@ -4,9 +4,8 @@ import Image from 'next/image';
 import BackToTopButton from '@/components/BackToTopButton';
 
 export const metadata: Metadata = {
-  title: 'How to Choose the Right Egg Substitute | BakingSubs',
-  description:
-    'Learn which egg substitutes work best for different types of baking, from brownies to light cakes, and how to avoid common pitfalls.',
+  title: 'How to Choose the Right Egg Substitute',
+  description: ' ',
 };
 
 export default function ChoosingSubstitutesPage() {

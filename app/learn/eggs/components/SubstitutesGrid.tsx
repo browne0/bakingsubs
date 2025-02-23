@@ -1,6 +1,12 @@
-import { substitutes } from '../data/substitutes';
+import { getEggSubstitutions } from '@/app/services/substitutionService';
+import { Tables } from '@/database.types';
+import Link from 'next/link';
+import { decimalToFraction } from '@/app/utils/fractions';
 
-export default function SubstitutesGrid() {
+export default async function SubstitutesGrid() {
+  const { data: substitutes = [] } = await getEggSubstitutions();
+
+  if (!substitutes) return null;
   return (
     <section id="substitutes" className="py-6">
       <div className="max-w-6xl mx-auto">
@@ -14,15 +20,19 @@ export default function SubstitutesGrid() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {substitutes.map((sub) => (
-            <a
+            <Link
               key={sub.id}
-              href={sub.href}
+              href={`/ingredients/eggs/substitutions/${sub.id}`}
               className="group block bg-white dark:bg-gray-800 rounded-lg shadow-sm 
                        hover:shadow-md transition-all border border-gray-200 
                        dark:border-gray-700 overflow-hidden"
             >
               <div className="aspect-video relative">
-                <img src={sub.image} alt={sub.name} className="object-cover w-full h-full" />
+                <img
+                  src="https://placehold.co/400x600"
+                  alt={sub.name}
+                  className="object-cover w-full h-full"
+                />
               </div>
 
               <div className="p-6">
@@ -35,26 +45,30 @@ export default function SubstitutesGrid() {
                 </h3>
 
                 <div className="mt-2 space-y-2">
-                  <p className="text-sm text-gray-600 dark:text-gray-300">{sub.description}</p>
-
                   <div className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                    Ratio: {sub.ratio}
+                    {sub.substitution_ingredients.map((si, index) => (
+                      <span key={si.ingredient.id} className="lowercase">
+                        {index > 0 && ' + '}
+                        {decimalToFraction(si.amount)} {si.unit} {si.ingredient.name}
+                      </span>
+                    ))}{' '}
+                    = 1 egg
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    {sub.bestUses.map((use) => (
+                    {sub.best_for?.map((use) => (
                       <span
                         key={use}
                         className="px-2 py-1 text-xs rounded-full bg-blue-100 
                                  dark:bg-blue-900 text-blue-800 dark:text-blue-200"
                       >
-                        {use}
+                        {use.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                       </span>
                     ))}
                   </div>
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>

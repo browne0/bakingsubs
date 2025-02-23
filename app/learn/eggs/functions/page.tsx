@@ -7,7 +7,7 @@ import Image from 'next/image';
 import BackToTopButton from '@/components/BackToTopButton';
 
 export const metadata: Metadata = {
-  title: 'The Function of Eggs in Baking | BakingSubs',
+  title: 'The Function of Eggs in Baking',
   description:
     'Learn how eggs provide structure, moisture, and richness in baking, and why these properties matter for successful baking.',
 };
