@@ -1,6 +1,14 @@
+import ButterImg from '@/app/images/learn/butter/cover.jpg';
 import EggsImg from '@/app/images/learn/eggs/eggs.jpg';
+import FlavoringsImg from '@/app/images/learn/flavorings/cover.jpg';
+import FlourImg from '@/app/images/learn/flour/cover.jpg';
+import LeavenersImg from '@/app/images/learn/leaveners/cover.jpg';
+import MilkImg from '@/app/images/learn/milk/cover.jpg';
+import OilsFatsImg from '@/app/images/learn/oils/cover.jpg';
+import SugarImg from '@/app/images/learn/sugar/cover.jpg';
+
 import { Metadata } from 'next';
-import { StaticImageData } from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -23,43 +31,43 @@ const substitutionCategories: {
   },
   {
     title: 'Milk',
-    image: 'https://placehold.co/800x800',
+    image: MilkImg,
     href: '/learn/milk',
     status: 'coming-soon' as const,
   },
   {
     title: 'Sugar',
-    image: 'https://placehold.co/800x800',
+    image: SugarImg,
     href: '/learn/sugar',
     status: 'coming-soon' as const,
   },
   {
     title: 'Butter',
-    image: 'https://placehold.co/800x800',
+    image: ButterImg,
     href: '/learn/butter',
     status: 'coming-soon' as const,
   },
   {
     title: 'Flour',
-    image: 'https://placehold.co/800x800',
+    image: FlourImg,
     href: '/learn/flour',
     status: 'coming-soon' as const,
   },
   {
     title: 'Leaveners',
-    image: 'https://placehold.co/800x800',
+    image: LeavenersImg,
     href: '/learn/leaveners',
     status: 'coming-soon' as const,
   },
   {
     title: 'Oils & Fats',
-    image: 'https://placehold.co/800x800',
+    image: OilsFatsImg,
     href: '/learn/oils-fats',
     status: 'coming-soon' as const,
   },
   {
     title: 'Vanilla & Flavorings',
-    image: 'https://placehold.co/800x800',
+    image: FlavoringsImg,
     href: '/learn/flavorings',
     status: 'coming-soon' as const,
   },
@@ -113,10 +121,13 @@ function CategoryCard({
 }) {
   return (
     <div className="relative aspect-square overflow-hidden rounded-xl">
-      <img
+      <Image
         src={typeof image === 'string' ? image : image.src}
         alt={title}
-        className="absolute inset-0 w-full h-full object-cover"
+        fill
+        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+        className="object-cover"
+        priority={title === 'Eggs'}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/0" />
 
