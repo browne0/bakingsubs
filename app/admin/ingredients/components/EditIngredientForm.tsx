@@ -17,7 +17,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Tables } from '@/database.types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -328,12 +327,12 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
             <div className="space-y-4">
               {imagePreview && (
                 <div className="rounded-lg overflow-hidden w-48 h-48">
-                  <Image
+                  <img
                     src={imagePreview}
                     alt={ingredient.name}
-                    width={192}
-                    height={192}
                     className="w-full h-full object-cover"
+                    width="192"
+                    height="192"
                   />
                 </div>
               )}

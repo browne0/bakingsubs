@@ -1,7 +1,6 @@
+import BackToTopButton from '@/components/BackToTopButton';
 import TableOfContents from '@/components/learn/TableOfContents';
 import type { Metadata } from 'next';
-import Image from 'next/image';
-import BackToTopButton from '@/components/BackToTopButton';
 
 export const metadata: Metadata = {
   title: 'How to Choose the Right Egg Substitute',
@@ -21,13 +20,11 @@ export default function ChoosingSubstitutesPage() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       {/* Hero Section */}
       <section className="relative h-[40vh] min-h-[320px]">
-        <Image
+        <img
           src="https://placehold.co/1920x1080"
           alt="Various egg substitutes in baking"
-          fill
-          className="object-cover"
-          priority
-          unoptimized
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="eager"
         />
         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
           <h1 className="text-4xl md:text-5xl text-white font-bold text-center px-4">

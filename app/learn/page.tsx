@@ -1,6 +1,6 @@
 import EggsImg from '@/app/images/learn/eggs/eggs.jpg';
 import { Metadata } from 'next';
-import Image, { StaticImageData } from 'next/image';
+import { StaticImageData } from 'next/image';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -113,7 +113,11 @@ function CategoryCard({
 }) {
   return (
     <div className="relative aspect-square overflow-hidden rounded-xl">
-      <Image src={image} alt={title} className="object-cover" fill unoptimized />
+      <img
+        src={typeof image === 'string' ? image : image.src}
+        alt={title}
+        className="absolute inset-0 w-full h-full object-cover"
+      />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/0" />
 
       <div className="absolute inset-x-0 bottom-0 p-4">

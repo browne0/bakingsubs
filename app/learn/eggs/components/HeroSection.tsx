@@ -1,5 +1,4 @@
 import EggsImg from '@/app/images/learn/eggs/eggs.jpg';
-import Image from 'next/image';
 
 export default function HeroSection() {
   return (
@@ -7,14 +6,11 @@ export default function HeroSection() {
       {/* Hero Image with Overlay */}
       <div className="relative h-[40vh] min-h-[400px] w-full">
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/30 z-10" />
-        <Image
-          src={EggsImg}
+        <img
+          src={EggsImg.src}
           alt="Various baked goods made with egg substitutes"
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-          unoptimized
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="eager"
         />
       </div>
 

@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -13,7 +12,7 @@ export function Navbar() {
     <header className="border-b">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center">
-          <Image src={Logo} alt="BakingSubs Logo" className="h-8 w-auto" unoptimized />
+          <img src={Logo.src} alt="BakingSubs Logo" className="h-8 w-auto" />
         </Link>
 
         {/* Desktop Navigation */}

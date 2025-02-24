@@ -2,7 +2,6 @@
 
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
-import Image from 'next/image';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
@@ -56,7 +55,7 @@ export function FileUpload({ onChange, value, className }: FileUploadProps) {
       >
         {preview ? (
           <div className="relative w-64 h-64">
-            <Image src={preview} alt="Preview" className="object-contain" fill unoptimized />
+            <img src={preview} alt="Preview" className="w-full h-full object-contain" />
             <button
               type="button"
               onClick={handleClear}

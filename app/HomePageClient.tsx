@@ -14,7 +14,7 @@ import { Tables } from '@/database.types';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useQuery } from '@tanstack/react-query';
 import debounce from 'lodash/debounce';
-import { ChevronRight, Search, UtensilsCrossed } from 'lucide-react';
+import { CheckCircle, ChevronRight, Search, UtensilsCrossed } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -115,23 +115,27 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <div className="container px-4 py-16 mx-auto sm:px-6 lg:px-8">
-        {/* Hero Section */}
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-            Need a Baking Substitute?
+      <div className="container py-16 mx-auto sm:px-6 lg:px-8">
+        {/* Updated Hero Section */}
+        <section className="min-h-[50vh] mx-auto text-center flex flex-col items-center justify-center">
+          {/* Trust Badge */}
+          <div className="inline-flex items-center gap-2 mb-8 bg-primary/10 px-4 py-2 rounded-full">
+            <CheckCircle className="h-4 w-4 text-primary" />
+            <span className="text-sm text-muted-foreground">Trusted by 100+ home bakers</span>
+          </div>
+
+          <h1 className="md:text-4xl text-3xl tracking-tight font-[500]">
+            <span className="font-bold">Rescue Your Recipe With Ingredients</span>
+            <span className="block text-primary mt-2 font-bold">From Your Pantry</span>
           </h1>
-          <h2 className="block text-primary text-2xl font-medium tracking-tight md:text-3xl mt-4">
-            Find the Perfect Ingredient Alternative.
-          </h2>
-          <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            Get practical substitution options for your baking ingredients with detailed
-            explanations and tips.
+
+          <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
+            Find detailed, community-tested baking substitutions for your bake in seconds.
           </p>
 
-          {/* Search Section */}
-          <div className="max-w-xl mx-auto mt-10">
-            <div className="relative flex shadow-lg rounded-lg">
+          {/* Search Section with enhanced styling */}
+          <div className="max-w-2xl w-full mx-auto mt-10">
+            <div className="relative flex shadow-xl rounded-lg border-2 border-primary/20">
               {isDesktop ? (
                 <div className="relative w-full">
                   <div className="flex">
@@ -141,7 +145,7 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
                         ref={inputRef}
                         type="text"
                         placeholder="Which ingredient are you missing?"
-                        className="w-full h-16 pl-12 pr-4 text-lg rounded-l-lg border-2 border-primary bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                        className="w-full h-16 pl-12 pr-4 text-lg rounded-l-lg bg-background placeholder:text-muted-foreground"
                         onChange={(e) => debouncedQuery(e.target.value)}
                         onFocus={() => setIsOpen(true)}
                         role="combobox"
@@ -272,17 +276,85 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
                 </>
               )}
             </div>
-          </div>
-        </div>
 
-        {/* Popular Ingredients Section */}
+            {/* Added Feature Badges */}
+            <div className="flex justify-center gap-6 mt-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center">
+                  ✓
+                </span>
+                <span>50+ Ingredients</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center">
+                  ✓
+                </span>
+                <span>Community Verified</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center">
+                  ✓
+                </span>
+                <span>Free to Use</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Video Demo Section in its own container */}
+        <section className="mt-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              {/* Text Content */}
+              <div className="text-left">
+                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                  Never let a missing ingredient stop your baking.
+                </h2>
+                <p className="mt-4 text-lg text-muted-foreground">
+                  Choose from over 50+ proven baking substitutions, share your solutions, and become
+                  a more confident baker. Your perfect alternative is just one search away.
+                </p>
+              </div>
+
+              {/* Video Container with Badge */}
+              <div>
+                <div className="rounded-xl overflow-hidden shadow-2xl">
+                  <div className="aspect-video">
+                    <video className="w-full h-full object-cover" autoPlay muted loop playsInline>
+                      <source src="/demo.mp4" type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                </div>
+
+                {/* Product Hunt Badge - Centered below video */}
+                <div className="flex justify-center">
+                  <a
+                    href="https://www.producthunt.com/posts/bakingsubs"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block mt-6 transform hover:scale-105 transition-transform duration-200"
+                  >
+                    <img
+                      src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=270&theme=light"
+                      alt="Featured on Product Hunt"
+                      className="h-12"
+                    />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Updated Popular Ingredients Section */}
         <section className="mt-24">
           <div className="text-center mb-10">
             <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              Most-Searched Ingredient Substitutes
+              Popular Ingredient Alternatives
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Missing one of these? Click to find your solution in seconds
+              Join hundreds of bakers who found their solution here
             </p>
           </div>
 
@@ -297,23 +369,29 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
             className="w-full max-w-7xl mx-auto"
           >
             <CarouselContent className="-ml-2 md:-ml-4">
-              {commonIngredients.map((ingredient) => (
+              {commonIngredients.map((ingredient, index) => (
                 <CarouselItem
                   key={ingredient.id}
-                  className="pl-2 md:pl-4 basis-2/3 md:basis-[28.5%] cursor-pointer"
-                  onClick={() => router.push(`/ingredients/${ingredient.id}`)}
+                  className="pl-2 md:pl-4 basis-2/3 md:basis-[28.5%]"
                 >
-                  <div className="relative aspect-[2/3] rounded-xl overflow-hidden transition-transform hover:scale-[1.02] duration-300">
-                    <img
-                      src="https://placehold.co/400x600"
-                      alt={ingredient.name}
-                      className="object-cover w-full h-full"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
-                      <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <h3 className="text-white text-xl font-medium">{ingredient.name}</h3>
-                        <p className="text-white/80 text-sm mt-1">Find alternatives →</p>
-                      </div>
+                  <div
+                    onClick={() => router.push(`/ingredients/${ingredient.id}`)}
+                    className="group rounded-xl overflow-hidden cursor-pointer bg-card border shadow-sm"
+                  >
+                    <div className="relative pt-[100%]">
+                      <img
+                        src={ingredient.image_url ?? 'https://placehold.co/400x400'}
+                        alt={ingredient.name}
+                        className="absolute inset-0 w-full h-full object-contain p-4 bg-white"
+                      />
+                    </div>
+                    <div className="p-4 bg-card">
+                      <h3 className="text-xl font-medium text-card-foreground">
+                        {ingredient.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground flex items-center gap-1">
+                        Find alternatives <ChevronRight className="h-4 w-4" />
+                      </p>
                     </div>
                   </div>
                 </CarouselItem>

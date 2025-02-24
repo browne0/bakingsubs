@@ -2,7 +2,6 @@ import BrokenEggImg from '@/app/images/learn/eggs/broken_egg.jpg';
 import ChoosingSubstituteImg from '@/app/images/learn/eggs/choosing_substitution.jpg';
 import DoughImg from '@/app/images/learn/eggs/dough.jpg';
 import EggWashImg from '@/app/images/learn/eggs/egg_wash.jpg';
-import Image from 'next/image';
 
 const scienceTopics = [
   {
@@ -47,12 +46,10 @@ export default function ScienceSection() {
               className={`grid md:grid-cols-2 gap-8 items-center ${index % 2 === 0 ? '' : 'md:[direction:rtl]'}`}
             >
               <div className="aspect-square relative overflow-hidden rounded-lg max-w-md mx-auto w-full">
-                <Image
-                  src={topic.image}
+                <img
+                  src={topic.image.src}
                   alt={topic.imageAlt}
-                  fill
-                  className="object-cover"
-                  unoptimized
+                  className="w-full h-full object-cover"
                 />
               </div>
 
@@ -86,12 +83,10 @@ export default function ScienceSection() {
 
           <div className="relative bg-white p-3 rotate-2 shadow-lg md:w-72 flex-shrink-0">
             <div className="aspect-square relative overflow-hidden">
-              <Image
-                src={ChoosingSubstituteImg}
+              <img
+                src={ChoosingSubstituteImg.src}
                 alt="Baking substitution example"
-                fill
-                className="object-cover"
-                unoptimized
+                className="w-full h-full object-cover"
               />
             </div>
           </div>

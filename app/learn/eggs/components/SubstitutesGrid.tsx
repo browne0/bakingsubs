@@ -1,7 +1,6 @@
 import { getEggSubstitutions } from '@/app/services/substitutionService';
-import { Tables } from '@/database.types';
-import Link from 'next/link';
 import { decimalToFraction } from '@/app/utils/fractions';
+import Link from 'next/link';
 
 export default async function SubstitutesGrid() {
   const { data: substitutes = [] } = await getEggSubstitutions();

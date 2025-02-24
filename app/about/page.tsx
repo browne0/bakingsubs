@@ -1,5 +1,4 @@
 import MaddyMalik from '@/app/images/maddy-malik.jpg';
-import Image from 'next/image';
 
 export default function AboutPage() {
   return (
@@ -30,14 +29,12 @@ export default function AboutPage() {
 
         {/* Image Section */}
         <section className="relative w-full flex justify-center rounded-lg overflow-hidden">
-          <Image
-            src={MaddyMalik}
+          <img
+            src={MaddyMalik.src}
             alt="Founders baking together"
-            className="object-cover"
-            width={400}
-            height={600}
-            priority
-            unoptimized
+            className="object-cover w-full h-full"
+            width="400"
+            height="600"
           />
         </section>
 

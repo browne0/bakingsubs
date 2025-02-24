@@ -1,10 +1,8 @@
+import BackToTopButton from '@/components/BackToTopButton';
 import QuickReferenceTable from '@/components/learn/QuickReferenceTable';
-import RecipeTypeCard from '@/components/learn/RecipeTypeCard';
-import BakingTip from '@/components/learn/BakingTip';
 import TableOfContents from '@/components/learn/TableOfContents';
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import BackToTopButton from '@/components/BackToTopButton';
 
 export const metadata: Metadata = {
   title: 'The Function of Eggs in Baking',
@@ -317,13 +315,12 @@ export default function EggFunctionsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
-                <Image
+                <img
                   src="https://placehold.co/400x300"
                   alt="Cake baking techniques"
-                  width={400}
-                  height={300}
-                  className="rounded-lg"
-                  unoptimized
+                  width="400"
+                  height="300"
+                  className="rounded-lg w-full h-auto"
                 />
                 <h3 className="text-xl font-semibold">Cakes</h3>
                 <p className="text-slate-600 dark:text-slate-400">
@@ -337,13 +334,12 @@ export default function EggFunctionsPage() {
               </div>
 
               <div className="space-y-4">
-                <Image
+                <img
                   src="https://placehold.co/400x300"
                   alt="Cookie baking techniques"
-                  width={400}
-                  height={300}
-                  className="rounded-lg"
-                  unoptimized
+                  width="400"
+                  height="300"
+                  className="rounded-lg w-full h-auto"
                 />
                 <h3 className="text-xl font-semibold">Cookies</h3>
                 <p className="text-slate-600 dark:text-slate-400">
