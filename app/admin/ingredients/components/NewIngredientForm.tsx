@@ -1,11 +1,14 @@
 'use client';
 
 import { FormProgress } from '@/app/components/FormProgress';
+import { FileUpload } from '@/app/components/ui/file-upload';
+import { BreadcrumbNav } from '@/components/BreadcrumbNav';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -14,6 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Database } from '@/database.types';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Select from 'react-select';
@@ -27,8 +31,6 @@ import {
   FUNCTION_OPTIONS,
   UNIT_OPTIONS,
 } from '../../constants';
-import { useRouter } from 'next/navigation';
-import { BreadcrumbNav } from '@/components/BreadcrumbNav';
 
 const steps = [
   {
@@ -71,6 +73,7 @@ const schema = z.object({
   allergens: z.array(z.string()),
   default_unit: z.string() as z.ZodType<Database['public']['Enums']['unit_type']>,
   notes: z.string(),
+  image: z.instanceof(File).optional(),
 });
 
 export type NewIngredientFormValues = z.infer<typeof schema>;
@@ -90,6 +93,7 @@ export function NewIngredientForm() {
       allergens: [],
       default_unit: 'g',
       notes: '',
+      image: undefined as File | undefined,
     },
   });
 
@@ -122,10 +126,20 @@ export function NewIngredientForm() {
       setIsSubmitting(true);
       form.clearErrors();
 
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, Array.isArray(value) ? JSON.stringify(value) : value.toString());
+        }
+      });
+
+      if (data.image) {
+        formData.append('file', data.image);
+      }
+
       const response = await fetch('/api/admin/ingredients', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -183,12 +197,29 @@ export function NewIngredientForm() {
                       <FormLabel>Category</FormLabel>
                       <FormControl>
                         <Select
+                          instanceId="category-select"
                           options={CATEGORY_OPTIONS}
                           value={CATEGORY_OPTIONS.find((option) => option.value === field.value)}
                           onChange={(newValue) => field.onChange(newValue?.value)}
                           className="react-select"
                           classNamePrefix="react-select"
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field: { onChange, value } }) => (
+                    <FormItem>
+                      <FormLabel>Image</FormLabel>
+                      <FormDescription>
+                        Upload an image of the ingredient (optional)
+                      </FormDescription>
+                      <FormControl>
+                        <FileUpload onChange={(file) => onChange(file)} value={value} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -207,6 +238,7 @@ export function NewIngredientForm() {
                       <FormLabel>Functions</FormLabel>
                       <FormControl>
                         <Select
+                          instanceId="functions-select"
                           isMulti
                           closeMenuOnSelect={false}
                           options={FUNCTION_OPTIONS}
@@ -233,6 +265,7 @@ export function NewIngredientForm() {
                       <FormLabel>Common Uses</FormLabel>
                       <FormControl>
                         <Select
+                          instanceId="common-in-select"
                           isMulti
                           closeMenuOnSelect={false}
                           options={COMMON_IN_OPTIONS}
@@ -259,6 +292,7 @@ export function NewIngredientForm() {
                       <FormLabel>Dietary Flags</FormLabel>
                       <FormControl>
                         <Select
+                          instanceId="dietary-flags-select"
                           isMulti
                           closeMenuOnSelect={false}
                           options={DIETARY_FLAGS_OPTIONS}
@@ -285,6 +319,7 @@ export function NewIngredientForm() {
                       <FormLabel>Allergens</FormLabel>
                       <FormControl>
                         <Select
+                          instanceId="allergens-select"
                           isMulti
                           closeMenuOnSelect={false}
                           options={ALLERGENS_OPTIONS}
@@ -311,6 +346,7 @@ export function NewIngredientForm() {
                       <FormLabel>Default Unit</FormLabel>
                       <FormControl>
                         <Select
+                          instanceId="default-unit-select"
                           options={UNIT_OPTIONS}
                           value={UNIT_OPTIONS.find((option) => option.value === field.value)}
                           onChange={(newValue) => field.onChange(newValue?.value)}

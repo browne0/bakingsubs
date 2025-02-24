@@ -1,22 +1,25 @@
 'use client';
 
+import { FileUpload } from '@/app/components/ui/file-upload';
 import { BreadcrumbNav } from '@/components/BreadcrumbNav';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Tables } from '@/database.types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { toast } from 'sonner';
@@ -29,7 +32,6 @@ import {
   FUNCTION_OPTIONS,
   UNIT_OPTIONS,
 } from '../../constants';
-import { useRouter } from 'next/navigation';
 
 const schema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -40,6 +42,7 @@ const schema = z.object({
   allergens: z.array(z.string()).optional(),
   default_unit: z.string().optional(),
   notes: z.string().optional(),
+  image: z.instanceof(File).optional(),
 });
 
 interface EditIngredientFormProps {
@@ -49,6 +52,8 @@ interface EditIngredientFormProps {
 export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const [imagePreview, setImagePreview] = useState(ingredient.image_url);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -64,15 +69,35 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
     },
   });
 
+  const handleImageChange = (file: File | null) => {
+    if (!file) return;
+    setImageFile(file);
+    // Create temporary preview URL
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreview(previewUrl);
+  };
+
   async function onSubmit(data: z.infer<typeof schema>) {
     try {
       setIsSubmitting(true);
       form.clearErrors();
 
+      const formData = new FormData();
+      // Add all form data
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, Array.isArray(value) ? JSON.stringify(value) : value.toString());
+        }
+      });
+
+      // Add image if there's a new one
+      if (imageFile) {
+        formData.append('file', imageFile);
+      }
+
       const response = await fetch(`/api/admin/ingredients/${ingredient.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -91,8 +116,21 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
       });
     } finally {
       setIsSubmitting(false);
+      // Clean up preview URL
+      if (imagePreview && imagePreview !== ingredient.image_url) {
+        URL.revokeObjectURL(imagePreview);
+      }
     }
   }
+
+  // Clean up preview URL when component unmounts
+  useEffect(() => {
+    return () => {
+      if (imagePreview && imagePreview !== ingredient.image_url) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview, ingredient.image_url]);
 
   return (
     <div className="container max-w-4xl mx-auto py-10">
@@ -129,6 +167,7 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
                   <FormLabel>Category</FormLabel>
                   <FormControl>
                     <Select
+                      instanceId="category-select"
                       options={CATEGORY_OPTIONS}
                       value={CATEGORY_OPTIONS.find((option) => option.value === field.value)}
                       onChange={(option) => field.onChange(option?.value)}
@@ -152,6 +191,7 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
                   </FormDescription>
                   <FormControl>
                     <Select
+                      instanceId="functions-select"
                       options={FUNCTION_OPTIONS}
                       value={FUNCTION_OPTIONS.filter((option) =>
                         field.value?.includes(option.value)
@@ -178,6 +218,7 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
                   </FormDescription>
                   <FormControl>
                     <Select
+                      instanceId="common-in-select"
                       options={COMMON_IN_OPTIONS}
                       value={COMMON_IN_OPTIONS.filter((option) =>
                         field.value?.includes(option.value)
@@ -202,6 +243,7 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
                   <FormDescription>Mark any relevant dietary characteristics</FormDescription>
                   <FormControl>
                     <Select
+                      instanceId="dietary-flags-select"
                       options={DIETARY_FLAGS_OPTIONS}
                       value={DIETARY_FLAGS_OPTIONS.filter((option) =>
                         field.value?.includes(option.value)
@@ -226,6 +268,7 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
                   <FormDescription>Select any allergens present in this ingredient</FormDescription>
                   <FormControl>
                     <Select
+                      instanceId="allergens-select"
                       options={ALLERGENS_OPTIONS}
                       value={ALLERGENS_OPTIONS.filter((option) =>
                         field.value?.includes(option.value)
@@ -252,6 +295,7 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
                   </FormDescription>
                   <FormControl>
                     <Select
+                      instanceId="default-unit-select"
                       options={UNIT_OPTIONS}
                       value={UNIT_OPTIONS.find((option) => option.value === field.value)}
                       onChange={(option) => field.onChange(option?.value)}
@@ -280,11 +324,46 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
                 </FormItem>
               )}
             />
+
+            <div className="space-y-4">
+              {imagePreview && (
+                <div className="rounded-lg overflow-hidden w-48 h-48">
+                  <Image
+                    src={imagePreview}
+                    alt={ingredient.name}
+                    width={192}
+                    height={192}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field: { onChange, value, ...field } }) => (
+                  <FormItem>
+                    <FormLabel>Image</FormLabel>
+                    <FormControl>
+                      <FileUpload
+                        onChange={(file) => {
+                          onChange(file);
+                          handleImageChange(file);
+                        }}
+                        value={imageFile}
+                      />
+                    </FormControl>
+                    <FormDescription>Upload an image of the ingredient (optional)</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </Card>
 
           <div className="flex justify-end">
             <Button type="submit" disabled={isSubmitting}>
-              Save Changes
+              {isSubmitting ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
         </form>

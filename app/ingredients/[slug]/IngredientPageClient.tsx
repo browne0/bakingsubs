@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tables } from '@/database.types';
 import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface IngredientPageClientProps {
@@ -35,6 +36,18 @@ export function IngredientPageClient({ ingredient, substitutions }: IngredientPa
       <div className="grid md:grid-cols-3 gap-8 mt-8">
         {/* Main Content */}
         <div className="md:col-span-2 space-y-8">
+          {ingredient.image_url && (
+            <div className="rounded-lg overflow-hidden">
+              <Image
+                src={ingredient.image_url}
+                alt={ingredient.name}
+                width={800}
+                height={400}
+                className="w-full h-auto object-cover"
+              />
+            </div>
+          )}
+
           <div>
             <h1 className="text-4xl font-bold mb-4">{ingredient.name}</h1>
             {ingredient.notes && <p className="text-muted-foreground">{ingredient.notes}</p>}

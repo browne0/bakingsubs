@@ -1,6 +1,8 @@
 'use client';
 
-import { CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { SearchDialog } from '@/components/SearchDialog';
+import { Button } from '@/components/ui/button';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import {
   Command,
   CommandEmpty,
@@ -11,15 +13,10 @@ import {
 import { Tables } from '@/database.types';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useQuery } from '@tanstack/react-query';
-import { Search } from 'lucide-react';
 import debounce from 'lodash/debounce';
-import { ChevronRight } from 'lucide-react';
-import { UtensilsCrossed } from 'lucide-react';
+import { ChevronRight, Search, UtensilsCrossed } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { SearchDialog } from '@/components/SearchDialog';
-import { Carousel } from '@/components/ui/carousel';
 
 interface HomePageClientProps {
   initialCommonIngredients: Tables<'ingredients'>[];
@@ -125,12 +122,11 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
             Need a Baking Substitute?
           </h1>
           <h2 className="block text-primary text-2xl font-medium tracking-tight md:text-3xl mt-4">
-            Science-Based Substitution Guide
+            Find the Perfect Ingredient Alternative.
           </h2>
           <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            We analyze food science research to determine exactly how ingredients work in your
-            recipes. Get precise, tested substitutions backed by culinary expertise and scientific
-            understanding.
+            Get practical substitution options for your baking ingredients with detailed
+            explanations and tips.
           </p>
 
           {/* Search Section */}

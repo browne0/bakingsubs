@@ -1,47 +1,53 @@
-import { slugify } from '@/app/utils/slugify';
-import { Tables, TablesInsert } from '@/database.types';
-import { createClient } from '../utils/supabase/server';
-import { getNutritionInfo } from './nutritionService';
+import { Tables } from '@/database.types';
 import { revalidateTag } from 'next/cache';
-type IngredientInsert = TablesInsert<'ingredients'>;
+import { slugify } from '../utils/slugify';
+import { createClient } from '../utils/supabase/server';
 
-export async function createIngredient(data: Omit<IngredientInsert, 'id' | 'search_count'>) {
-  const slug = slugify(data.name);
+export async function createIngredient(formData: FormData) {
+  const supabase = await createClient();
 
-  // Fetch nutrition information
-  let nutritionInfo;
-  try {
-    nutritionInfo = await getNutritionInfo(data.name);
-  } catch (error) {
-    console.error('Error fetching nutrition info:', error);
-    nutritionInfo = {
-      fat: null,
-      calories: null,
-      sugar: null,
-      sodium: null,
-      fiber: null,
-      protein: null,
-      carbohydrates: null,
-    };
+  // Handle image upload if present
+  const file = formData.get('file') as File | null;
+  let imageUrl = null;
+
+  if (file) {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('ingredient-images')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (uploadError) throw uploadError;
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('ingredient-images').getPublicUrl(fileName);
+
+    imageUrl = publicUrl;
   }
 
-  const supabase = await createClient();
+  // Parse form data
+  const data = {
+    id: slugify(formData.get('name') as string),
+    name: formData.get('name') as string,
+    category: formData.get('category') as string,
+    functions: JSON.parse(formData.get('functions') as string),
+    common_in: JSON.parse(formData.get('common_in') as string),
+    dietary_flags: JSON.parse(formData.get('dietary_flags') as string),
+    allergens: JSON.parse(formData.get('allergens') as string),
+    default_unit: formData.get('default_unit') as string,
+    notes: formData.get('notes') as string,
+    image_url: imageUrl,
+    search_count: 0,
+  };
 
   const { data: ingredient, error } = await supabase
     .from('ingredients')
-    .insert({
-      id: slug,
-      name: data.name,
-      category: data.category,
-      functions: data.functions,
-      common_in: data.common_in,
-      dietary_flags: data.dietary_flags,
-      allergens: data.allergens,
-      default_unit: data.default_unit,
-      notes: data.notes,
-      search_count: 0,
-      ...nutritionInfo,
-    })
+    .insert(data)
     .select()
     .single();
 
@@ -123,6 +129,27 @@ export async function searchIngredients(query: string): Promise<Tables<'ingredie
 export async function deleteIngredient(id: string) {
   const supabase = await createClient();
 
+  // Get the ingredient to find its image URL
+  const { data: ingredient } = await supabase
+    .from('ingredients')
+    .select('image_url')
+    .eq('id', id)
+    .single();
+
+  // Delete image from storage if it exists
+  if (ingredient?.image_url) {
+    const fileName = ingredient.image_url.split('/').pop();
+    if (fileName) {
+      const { error: storageError } = await supabase.storage
+        .from('ingredient-images')
+        .remove([fileName]);
+
+      if (storageError) {
+        console.error('Error deleting image:', storageError);
+      }
+    }
+  }
+
   // First, delete all substitutions where this ingredient is used
   const { error: substitutionsError } = await supabase
     .from('substitution_ingredients')
@@ -162,4 +189,27 @@ export async function updateIngredient(id: string, data: Partial<Tables<'ingredi
 
   revalidateTag('ingredients');
   return ingredient;
+}
+
+export async function uploadIngredientImage(file: File) {
+  const supabase = await createClient();
+
+  // Generate a unique filename
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+
+  // Upload the file to Supabase storage
+  const { data, error } = await supabase.storage.from('ingredient-images').upload(fileName, file, {
+    cacheControl: '3600',
+    upsert: false,
+  });
+
+  if (error) throw error;
+
+  // Get the public URL
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from('ingredient-images').getPublicUrl(fileName);
+
+  return publicUrl;
 }
