@@ -1,5 +1,6 @@
 import { Tables } from '@/database.types';
 import { revalidateTag } from 'next/cache';
+import sharp from 'sharp';
 import { slugify } from '../utils/slugify';
 import { createClient } from '../utils/supabase/server';
 
@@ -11,23 +12,7 @@ export async function createIngredient(formData: FormData) {
   let imageUrl = null;
 
   if (file) {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from('ingredient-images')
-      .upload(fileName, file, {
-        cacheControl: '3600',
-        upsert: false,
-      });
-
-    if (uploadError) throw uploadError;
-
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from('ingredient-images').getPublicUrl(fileName);
-
-    imageUrl = publicUrl;
+    imageUrl = await uploadIngredientImage(file);
   }
 
   // Parse form data
@@ -194,19 +179,29 @@ export async function updateIngredient(id: string, data: Partial<Tables<'ingredi
 export async function uploadIngredientImage(file: File) {
   const supabase = await createClient();
 
-  // Generate a unique filename
-  const fileExt = file.name.split('.').pop();
-  const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+  // Convert File to Buffer
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
 
-  // Upload the file to Supabase storage
-  const { data, error } = await supabase.storage.from('ingredient-images').upload(fileName, file, {
-    cacheControl: '3600',
-    upsert: false,
-  });
+  // Compress image while maintaining original dimensions
+  const compressedImageBuffer = await sharp(buffer)
+    .jpeg({ quality: 80 }) // Convert to JPEG with 80% quality
+    .toBuffer();
+
+  // Generate a unique filename with .jpg extension
+  const fileName = `${Math.random().toString(36).substring(2)}.jpg`;
+
+  // Upload the compressed file to Supabase storage
+  const { error } = await supabase.storage
+    .from('ingredient-images')
+    .upload(fileName, compressedImageBuffer, {
+      contentType: 'image/jpeg',
+      cacheControl: '3600',
+      upsert: false,
+    });
 
   if (error) throw error;
 
-  // Get the public URL
   const {
     data: { publicUrl },
   } = supabase.storage.from('ingredient-images').getPublicUrl(fileName);

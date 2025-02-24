@@ -127,7 +127,7 @@ function CategoryCard({
         fill
         sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
         className="object-cover"
-        priority={title === 'Eggs'}
+        priority
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/0" />
 
