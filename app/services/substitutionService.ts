@@ -1,11 +1,45 @@
 import { Database } from '@/database.types';
 import { revalidateTag } from 'next/cache';
+import sharp from 'sharp';
 import { slugify } from '../utils/slugify';
 import { createClient } from '../utils/supabase/server';
 
 type SubstitutionInsert = Database['public']['Tables']['substitutions']['Insert'];
 type SubstitutionIngredientInsert =
   Database['public']['Tables']['substitution_ingredients']['Insert'];
+
+export async function uploadSubstitutionImage(file: File) {
+  const supabase = await createClient();
+
+  // Convert File to Buffer
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  // Compress image while maintaining original dimensions
+  const compressedImageBuffer = await sharp(buffer)
+    .jpeg({ quality: 80 }) // Convert to JPEG with 80% quality
+    .toBuffer();
+
+  // Generate a unique filename with .jpg extension
+  const fileName = `${Math.random().toString(36).substring(2)}.jpg`;
+
+  // Upload the compressed file to Supabase storage
+  const { error } = await supabase.storage
+    .from('substitution-images')
+    .upload(fileName, compressedImageBuffer, {
+      contentType: 'image/jpeg',
+      cacheControl: '3600',
+      upsert: false,
+    });
+
+  if (error) throw error;
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from('substitution-images').getPublicUrl(fileName);
+
+  return publicUrl;
+}
 
 export async function createSubstitution(
   originalIngredientId: string,
@@ -15,9 +49,20 @@ export async function createSubstitution(
     unit: Database['public']['Enums']['unit_type'];
     notes?: string;
   }>,
-  data: Omit<SubstitutionInsert, 'id' | 'original_ingredient_id' | 'dietary_flags' | 'allergens'>
+  data: Omit<
+    SubstitutionInsert,
+    'id' | 'original_ingredient_id' | 'dietary_flags' | 'allergens'
+  > & {
+    file?: File;
+  }
 ) {
   const supabase = await createClient();
+
+  // Handle image upload if present
+  let imageUrl = null;
+  if (data.file) {
+    imageUrl = await uploadSubstitutionImage(data.file);
+  }
 
   // Fetch all ingredients to get their dietary flags and allergens
   const { data: ingredients, error: fetchIngredientsError } = await supabase
@@ -77,7 +122,7 @@ export async function createSubstitution(
     throw new Error('A substitution with this name already exists');
   }
 
-  // Insert with aggregated dietary information
+  // Insert with aggregated dietary information and image URL
   const { data: substitution, error: substitutionError } = await supabase
     .from('substitutions')
     .insert({
@@ -86,6 +131,7 @@ export async function createSubstitution(
       dietary_flags: Array.from(dietaryFlags),
       allergens: Array.from(allergens),
       ...data,
+      image_url: imageUrl,
     })
     .select()
     .single();
@@ -234,47 +280,74 @@ export async function deleteSubstitution(id: string) {
   revalidateTag('substitution');
 }
 
-export async function updateSubstitution(id: string, data: any) {
+export async function updateSubstitution(
+  id: string,
+  data: Partial<Omit<SubstitutionInsert, 'id'>> & {
+    file?: File;
+    ingredients?: Array<{
+      ingredientName: string;
+      amount: number;
+      unit: Database['public']['Enums']['unit_type'];
+      notes?: string;
+    }>;
+  }
+) {
   const supabase = await createClient();
 
-  // First update the substitution
-  const { error: substitutionError } = await supabase
+  // Handle image upload if present
+  let imageUrl = null;
+  if (data.file) {
+    imageUrl = await uploadSubstitutionImage(data.file);
+  }
+
+  // Extract ingredients and file from data to handle separately
+  const { ingredients, file: _, ...substitutionData } = data;
+
+  // Update the substitution with the new data
+  const { data: substitution, error: updateError } = await supabase
     .from('substitutions')
     .update({
-      name: data.name,
-      amount: data.amount,
-      unit: data.unit,
-      rating: data.rating,
-      best_for: data.bestFor,
-      effects: data.effects,
+      ...substitutionData,
+      ...(imageUrl && { image_url: imageUrl }),
     })
-    .eq('id', id);
+    .eq('id', id)
+    .select()
+    .single();
 
-  if (substitutionError) throw substitutionError;
+  if (updateError) throw updateError;
 
-  // Delete existing ingredients
-  const { error: deleteError } = await supabase
-    .from('substitution_ingredients')
-    .delete()
-    .eq('substitution_id', id);
+  // If ingredients are provided, update them
+  if (ingredients) {
+    // Delete existing ingredients
+    const { error: deleteError } = await supabase
+      .from('substitution_ingredients')
+      .delete()
+      .eq('substitution_id', id);
 
-  if (deleteError) throw deleteError;
+    if (deleteError) throw deleteError;
 
-  // Insert new ingredients
-  const { error: ingredientsError } = await supabase.from('substitution_ingredients').insert(
-    data.ingredients.map((ing: any) => ({
-      substitution_id: id,
-      ingredient_id: slugify(ing.ingredientName),
-      amount: ing.amount,
-      unit: ing.unit,
-      notes: ing.notes,
-    }))
-  );
+    // Insert new ingredients
+    const substitutionIngredients: SubstitutionIngredientInsert[] = ingredients.map(
+      (ingredient) => ({
+        substitution_id: id,
+        ingredient_id: slugify(ingredient.ingredientName),
+        amount: ingredient.amount,
+        unit: ingredient.unit,
+        notes: ingredient.notes,
+      })
+    );
 
-  if (ingredientsError) throw ingredientsError;
+    const { error: insertError } = await supabase
+      .from('substitution_ingredients')
+      .insert(substitutionIngredients);
 
+    if (insertError) throw insertError;
+  }
+
+  // Revalidate cache
   revalidateTag('substitution');
-  return { success: true };
+
+  return substitution;
 }
 
 export async function getEggSubstitutions() {

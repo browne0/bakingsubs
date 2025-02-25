@@ -18,7 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tables } from '@/database.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { toast } from 'sonner';
@@ -51,7 +51,6 @@ interface EditIngredientFormProps {
 export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  const [imagePreview, setImagePreview] = useState(ingredient.image_url);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof schema>>({
@@ -68,12 +67,9 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
     },
   });
 
-  const handleImageChange = (file: File | null) => {
-    if (!file) return;
+  const handleImageUpload = (file: File | null) => {
     setImageFile(file);
-    // Create temporary preview URL
-    const previewUrl = URL.createObjectURL(file);
-    setImagePreview(previewUrl);
+    form.setValue('image', file || undefined);
   };
 
   async function onSubmit(data: z.infer<typeof schema>) {
@@ -84,7 +80,7 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
       const formData = new FormData();
       // Add all form data
       Object.entries(data).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
+        if (value !== undefined && value !== null && key !== 'image') {
           formData.append(key, Array.isArray(value) ? JSON.stringify(value) : value.toString());
         }
       });
@@ -115,21 +111,8 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
       });
     } finally {
       setIsSubmitting(false);
-      // Clean up preview URL
-      if (imagePreview && imagePreview !== ingredient.image_url) {
-        URL.revokeObjectURL(imagePreview);
-      }
     }
   }
-
-  // Clean up preview URL when component unmounts
-  useEffect(() => {
-    return () => {
-      if (imagePreview && imagePreview !== ingredient.image_url) {
-        URL.revokeObjectURL(imagePreview);
-      }
-    };
-  }, [imagePreview, ingredient.image_url]);
 
   return (
     <div className="container max-w-4xl mx-auto py-10">
@@ -325,34 +308,20 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
             />
 
             <div className="space-y-4">
-              {imagePreview && (
-                <div className="rounded-lg overflow-hidden w-48 h-48">
-                  <img
-                    src={imagePreview}
-                    alt={ingredient.name}
-                    className="w-full h-full object-cover"
-                    width="192"
-                    height="192"
-                  />
-                </div>
-              )}
-
               <FormField
                 control={form.control}
                 name="image"
                 render={({ field: { onChange, value, ...field } }) => (
                   <FormItem>
                     <FormLabel>Image</FormLabel>
+                    <FormDescription>Upload an image of the ingredient (optional)</FormDescription>
                     <FormControl>
                       <FileUpload
-                        onChange={(file) => {
-                          onChange(file);
-                          handleImageChange(file);
-                        }}
+                        onChange={handleImageUpload}
                         value={imageFile}
+                        existingUrl={ingredient.image_url ?? undefined}
                       />
                     </FormControl>
-                    <FormDescription>Upload an image of the ingredient (optional)</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

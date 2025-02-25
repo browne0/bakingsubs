@@ -1,23 +1,22 @@
 'use client';
 
-import { BreadcrumbNav } from '@/components/BreadcrumbNav';
-import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { QueryData } from '@supabase/supabase-js';
-import { getSubstitutionById } from '@/app/services/substitutionService';
-import { Database } from '@/database.types';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Card } from '@/components/ui/card';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { useFieldArray } from 'react-hook-form';
-import AsyncSelect from 'react-select/async';
-import ReactSelect from 'react-select';
 import { BEST_FOR_OPTIONS, UNIT_OPTIONS } from '@/app/admin/constants';
+import { FileUpload } from '@/app/components/ui/file-upload';
+import { getSubstitutionById } from '@/app/services/substitutionService';
+import { BreadcrumbNav } from '@/components/BreadcrumbNav';
+import { EditableStarRating } from '@/components/EditableStarRating';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -25,7 +24,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { EditableStarRating } from '@/components/EditableStarRating';
+import { Database } from '@/database.types';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { QueryData } from '@supabase/supabase-js';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import ReactSelect from 'react-select';
+import AsyncSelect from 'react-select/async';
+import { toast } from 'sonner';
+import * as z from 'zod';
 
 const schema = z.object({
   name: z.string(),
@@ -50,6 +58,7 @@ const schema = z.object({
   bestFor: z
     .array(z.string() as z.ZodType<Database['public']['Enums']['substitution_best_for']>)
     .min(1, 'Select at least one use case'),
+  image: z.instanceof(File).optional(),
 });
 
 type EditSubstitutionFormValues = z.infer<typeof schema>;
@@ -60,6 +69,10 @@ interface EditSubstitutionFormProps {
 
 export function EditSubstitutionForm({ substitution }: EditSubstitutionFormProps) {
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imagePreview, setImagePreview] = useState(substitution.image_url);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
   const form = useForm<EditSubstitutionFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -83,12 +96,79 @@ export function EditSubstitutionForm({ substitution }: EditSubstitutionFormProps
     name: 'ingredients',
   });
 
+  // Clean up preview URL when component unmounts
+  useEffect(() => {
+    return () => {
+      if (imagePreview && imagePreview !== substitution.image_url) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview, substitution.image_url]);
+
+  const validateImageAspectRatio = (file: File): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(img.src);
+        resolve(img.width > img.height); // true if horizontal
+      };
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleImageUpload = async (file: File | null) => {
+    if (!file) {
+      form.setValue('image', undefined);
+      setImageFile(null);
+      setImagePreview(substitution.image_url);
+      return;
+    }
+
+    const isHorizontal = await validateImageAspectRatio(file);
+    if (!isHorizontal) {
+      form.setError('image', {
+        type: 'manual',
+        message: 'Please upload an image with horizontal aspect ratio',
+      });
+      form.setValue('image', undefined);
+      setImageFile(null);
+      setImagePreview(substitution.image_url);
+      return;
+    }
+
+    form.clearErrors('image');
+    form.setValue('image', file);
+    setImageFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreview(previewUrl);
+  };
+
   async function onSubmit(data: EditSubstitutionFormValues) {
     try {
+      setIsSubmitting(true);
+      form.clearErrors();
+
+      const formData = new FormData();
+
+      // Add all form data
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && key !== 'image') {
+          if (key === 'effects' || key === 'bestFor' || key === 'ingredients') {
+            formData.append(key, JSON.stringify(value));
+          } else {
+            formData.append(key, value.toString());
+          }
+        }
+      });
+
+      // Add image if there's a new one
+      if (data.image) {
+        formData.append('file', data.image);
+      }
+
       const response = await fetch(`/api/admin/substitutions/${substitution.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -100,6 +180,8 @@ export function EditSubstitutionForm({ substitution }: EditSubstitutionFormProps
       router.refresh();
     } catch (error) {
       toast.error('Failed to update substitution');
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -404,6 +486,27 @@ export function EditSubstitutionForm({ substitution }: EditSubstitutionFormProps
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field: { onChange, value } }) => (
+                  <FormItem>
+                    <FormLabel>Image</FormLabel>
+                    <FormDescription>
+                      Upload a horizontal image of the substitution (optional)
+                    </FormDescription>
+                    <FormControl>
+                      <FileUpload
+                        onChange={handleImageUpload}
+                        value={imageFile}
+                        existingUrl={substitution.image_url ?? undefined}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </Card>
 
@@ -415,7 +518,9 @@ export function EditSubstitutionForm({ substitution }: EditSubstitutionFormProps
             >
               Cancel
             </Button>
-            <Button type="submit">Save Changes</Button>
+            <Button type="submit" disabled={isSubmitting || !form.formState.isValid}>
+              Save Changes
+            </Button>
           </div>
         </form>
       </Form>

@@ -30,31 +30,32 @@ const footerLinks = {
 export function Footer() {
   return (
     <footer className="border-t">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+      <div className="container mx-auto px-4 py-8 md:py-12">
+        <div className="flex flex-col space-y-8 md:space-y-0 md:grid md:grid-cols-12 md:gap-8">
           {/* Logo and Description Column */}
           <div className="md:col-span-4">
             <Link href="/" className="inline-block">
-              <img src={Logo.src} alt="BakingSubs Logo" className="h-8 w-auto" />
+              <img src={Logo.src} alt="BakingSubs Logo" className="h-6 md:h-8 w-auto" />
             </Link>
-            <p className="mt-4 text-sm text-muted-foreground">
-              Your definitive resource for baking substitutions, <br />
-              helping you understand not just what to substitute, <br />
-              but why and how.
+            <p className="mt-3 md:mt-4 text-sm text-muted-foreground">
+              Your definitive resource for baking substitutions, helping you understand not just
+              what to substitute, but why and how.
             </p>
           </div>
 
           {/* Links Columns */}
-          <div className="md:col-span-8 grid grid-cols-3 gap-8">
+          <div className="md:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-6 md:gap-8">
             {Object.values(footerLinks).map((section) => (
               <div key={section.title}>
-                <h3 className="font-semibold text-foreground">{section.title}</h3>
-                <ul className="mt-4 space-y-3">
+                <h3 className="font-semibold text-foreground text-sm md:text-base">
+                  {section.title}
+                </h3>
+                <ul className="mt-3 md:mt-4 space-y-2 md:space-y-3">
                   {section.links.map((link) => (
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        className="text-xs md:text-sm text-muted-foreground hover:text-foreground transition-colors"
                       >
                         {link.label}
                       </Link>
@@ -66,8 +67,8 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 mt-8 border-t">
-          <p className="text-sm text-center text-muted-foreground">
+        <div className="pt-6 mt-6 md:pt-8 md:mt-8 border-t">
+          <p className="text-xs md:text-sm text-center text-muted-foreground">
             © {new Date().getFullYear()} BakingSubs. All rights reserved.
           </p>
         </div>

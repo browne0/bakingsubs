@@ -1,26 +1,21 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+import { FileUpload } from '@/app/components/ui/file-upload';
+import { COMMON_FRACTIONS } from '@/app/utils/fractions';
 import { BreadcrumbNav } from '@/components/BreadcrumbNav';
+import { EditableStarRating } from '@/components/EditableStarRating';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import AsyncSelect from 'react-select/async';
-import ReactSelect from 'react-select';
-import { BEST_FOR_OPTIONS, UNIT_OPTIONS } from '../../constants';
-import { EditableStarRating } from '@/components/EditableStarRating';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -28,10 +23,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import ReactSelect from 'react-select';
+import AsyncSelect from 'react-select/async';
+import { toast } from 'sonner';
+import { BEST_FOR_OPTIONS, UNIT_OPTIONS } from '../../constants';
 import { SubstitutionFormValues, substitutionSchema } from '../schema';
-import { COMMON_FRACTIONS } from '@/app/utils/fractions';
-import { slugify } from '@/app/utils/slugify';
 
 interface SubstitutionFormProps {
   initialData?: SubstitutionFormValues;
@@ -41,6 +43,8 @@ interface SubstitutionFormProps {
 
 export function SubstitutionForm({ initialData, mode, id }: SubstitutionFormProps) {
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm<SubstitutionFormValues>({
     resolver: zodResolver(substitutionSchema),
     defaultValues: initialData || {
@@ -52,6 +56,7 @@ export function SubstitutionForm({ initialData, mode, id }: SubstitutionFormProp
       rating: 3,
       effects: {},
       bestFor: [],
+      image: undefined,
     },
   });
 
@@ -74,32 +79,65 @@ export function SubstitutionForm({ initialData, mode, id }: SubstitutionFormProp
     }
   };
 
+  const validateImageAspectRatio = (file: File): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(img.src);
+        resolve(img.width > img.height); // true if horizontal
+      };
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleImageUpload = async (file: File | null) => {
+    if (!file) {
+      form.setValue('image', undefined);
+      return;
+    }
+
+    const isHorizontal = await validateImageAspectRatio(file);
+    if (!isHorizontal) {
+      form.setError('image', {
+        type: 'manual',
+        message: 'Please upload an image with horizontal aspect ratio',
+      });
+      form.setValue('image', undefined);
+      return;
+    }
+
+    form.clearErrors('image');
+    form.setValue('image', file);
+  };
+
   async function onSubmit(data: SubstitutionFormValues) {
     try {
+      setIsSubmitting(true);
+      form.clearErrors();
+
+      const formData = new FormData();
+
+      // Add all form data
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && key !== 'image') {
+          if (key === 'effects' || key === 'bestFor' || key === 'ingredients') {
+            formData.append(key, JSON.stringify(value));
+          } else {
+            formData.append(key, value.toString());
+          }
+        }
+      });
+
+      // Add image if there's a new one
+      if (data.image) {
+        formData.append('file', data.image);
+      }
+
       const endpoint =
         mode === 'create' ? '/api/admin/substitutions' : `/api/admin/substitutions/${id}`;
       const response = await fetch(endpoint, {
         method: mode === 'create' ? 'POST' : 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(
-          mode === 'create'
-            ? {
-                fromIngredientId: slugify(data.ingredientName),
-                name: data.name,
-                amount: data.amount,
-                unit: data.unit,
-                rating: data.rating,
-                effects: data.effects,
-                bestFor: data.bestFor,
-                ingredients: data.ingredients.map((ing) => ({
-                  ingredientName: ing.ingredientName,
-                  amount: ing.amount,
-                  unit: ing.unit,
-                  notes: ing.notes,
-                })),
-              }
-            : data
-        ),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -425,6 +463,25 @@ export function SubstitutionForm({ initialData, mode, id }: SubstitutionFormProp
                   </FormItem>
                 )}
               />
+
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field: { onChange, value } }) => (
+                    <FormItem>
+                      <FormLabel>Image</FormLabel>
+                      <FormDescription>
+                        Upload a horizontal image of the substitution (optional)
+                      </FormDescription>
+                      <FormControl>
+                        <FileUpload onChange={handleImageUpload} value={value} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
           </Card>
 
@@ -432,7 +489,7 @@ export function SubstitutionForm({ initialData, mode, id }: SubstitutionFormProp
             <Button type="button" variant="outline" onClick={() => router.back()}>
               Cancel
             </Button>
-            <Button type="submit">
+            <Button type="submit" disabled={isSubmitting || !form.formState.isValid}>
               {mode === 'create' ? 'Create Substitution' : 'Save Changes'}
             </Button>
           </div>

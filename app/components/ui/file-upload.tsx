@@ -2,28 +2,38 @@
 
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 interface FileUploadProps {
   onChange?: (file: File | null) => void;
   value?: File | null;
   className?: string;
+  existingUrl?: string;
 }
 
-export function FileUpload({ onChange, value, className }: FileUploadProps) {
-  const [preview, setPreview] = useState<string | null>(null);
+export function FileUpload({ onChange, value, className, existingUrl }: FileUploadProps) {
+  const [preview, setPreview] = useState<string | null>(existingUrl || null);
+
+  // Handle initial value and value changes
+  useEffect(() => {
+    if (value) {
+      const objectUrl = URL.createObjectURL(value);
+      setPreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    } else if (existingUrl) {
+      setPreview(existingUrl);
+    }
+  }, [value, existingUrl]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
       if (file) {
-        if (preview) URL.revokeObjectURL(preview);
-        setPreview(URL.createObjectURL(file));
         onChange?.(file);
       }
     },
-    [onChange, preview]
+    [onChange]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -34,9 +44,11 @@ export function FileUpload({ onChange, value, className }: FileUploadProps) {
 
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (preview) URL.revokeObjectURL(preview);
-    setPreview(null);
     onChange?.(null);
+    if (preview && !existingUrl) {
+      URL.revokeObjectURL(preview);
+    }
+    setPreview(null);
   };
 
   return (
@@ -47,19 +59,19 @@ export function FileUpload({ onChange, value, className }: FileUploadProps) {
       <div
         className={cn(
           'flex flex-col items-center justify-center w-full rounded-lg transition-colors',
-          preview ? 'h-auto' : 'h-64 border-2 border-dashed',
+          preview ? 'h-auto p-4' : 'h-64 border-2 border-dashed',
           isDragActive
             ? 'border-primary bg-primary/5'
             : 'border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600'
         )}
       >
         {preview ? (
-          <div className="relative w-64 h-64">
-            <img src={preview} alt="Preview" className="w-full h-full object-contain" />
+          <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden bg-black/5">
+            <img src={preview} alt="Preview" className="w-full h-full object-cover" />
             <button
               type="button"
               onClick={handleClear}
-              className="absolute top-2 right-2 p-1.5 bg-black/70 hover:bg-black/90 text-white rounded-full"
+              className="absolute top-2 right-2 p-1.5 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
             >
               <X className="h-4 w-4" />
             </button>

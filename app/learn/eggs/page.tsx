@@ -19,7 +19,7 @@ export default function EggSubstitutionsHub() {
     <main className="min-h-screen">
       <HeroSection />
       <NavigationMenu />
-      <div className="container mx-auto px-4 py-8 space-y-16 max-w-6xl">
+      <div className="container mx-auto px-4 py-8 space-y-16 max-w-6xl [&>section]:scroll-mt-20">
         <StartHereSection />
         <ScienceSection />
         <SubstitutesGrid />

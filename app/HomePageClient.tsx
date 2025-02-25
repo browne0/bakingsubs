@@ -117,24 +117,28 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
     <main className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <div className="container py-16 mx-auto sm:px-6 lg:px-8">
         {/* Updated Hero Section */}
-        <section className="min-h-[50vh] mx-auto text-center flex flex-col items-center justify-center">
+        <section className="min-h-[50vh] mx-auto text-center flex flex-col items-center justify-center px-4 sm:px-6">
           {/* Trust Badge */}
-          <div className="inline-flex items-center gap-2 mb-8 bg-primary/10 px-4 py-2 rounded-full">
-            <CheckCircle className="h-4 w-4 text-primary" />
-            <span className="text-sm text-muted-foreground">Trusted by 100+ home bakers</span>
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 mb-6 sm:mb-8 bg-primary/10 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full">
+            <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+            <span className="text-xs sm:text-sm text-muted-foreground">
+              Trusted by 100+ home bakers
+            </span>
           </div>
 
-          <h1 className="md:text-4xl text-3xl tracking-tight font-[500]">
-            <span className="font-bold">Rescue Your Recipe With Ingredients</span>
-            <span className="block text-primary mt-2 font-bold">From Your Pantry</span>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl tracking-tight font-[500] max-w-[90%] sm:max-w-none">
+            <span className="font-bold">Rescue Your Recipe With</span>
+            <span className="block text-primary mt-1.5 sm:mt-2 font-bold">
+              Ingredients From Your Pantry
+            </span>
           </h1>
 
-          <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
+          <p className="mt-4 sm:mt-6 text-base sm:text-lg leading-7 sm:leading-8 text-muted-foreground max-w-[95%] sm:max-w-2xl mx-auto">
             Find detailed, community-tested baking substitutions for your bake in seconds.
           </p>
 
           {/* Search Section with enhanced styling */}
-          <div className="max-w-2xl w-full mx-auto mt-10">
+          <div className="max-w-2xl w-full mx-auto mt-8 sm:mt-10">
             <div className="relative flex shadow-xl rounded-lg border-2 border-primary/20">
               {isDesktop ? (
                 <div className="relative w-full">
@@ -264,10 +268,10 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
                 </div>
               ) : (
                 <>
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-6 w-6 pointer-events-none" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                   <Button
                     variant="outline"
-                    className="w-full pl-10 h-14 justify-start font-normal text-muted-foreground text-lg"
+                    className="w-full pl-10 h-12 sm:h-14 justify-start font-normal text-muted-foreground text-base sm:text-lg"
                     onClick={() => setOpen(true)}
                   >
                     Which ingredient are you missing?
@@ -277,22 +281,22 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
               )}
             </div>
 
-            {/* Added Feature Badges */}
-            <div className="flex justify-center gap-6 mt-6 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center">
+            {/* Feature Badges */}
+            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-6 mt-4 sm:mt-6 text-xs sm:text-sm text-muted-foreground">
+              <div className="flex items-center gap-1.5 sm:gap-2 justify-center">
+                <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-green-500/20 flex items-center justify-center text-[10px] sm:text-xs">
                   ✓
                 </span>
                 <span>50+ Ingredients</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center">
+              <div className="flex items-center gap-1.5 sm:gap-2 justify-center">
+                <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-green-500/20 flex items-center justify-center text-[10px] sm:text-xs">
                   ✓
                 </span>
                 <span>Community Verified</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-full bg-green-500/20 flex items-center justify-center">
+              <div className="flex items-center gap-1.5 sm:gap-2 justify-center">
+                <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-green-500/20 flex items-center justify-center text-[10px] sm:text-xs">
                   ✓
                 </span>
                 <span>Free to Use</span>

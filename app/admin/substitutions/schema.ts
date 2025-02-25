@@ -1,5 +1,5 @@
-import * as z from 'zod';
 import { Database } from '@/database.types';
+import * as z from 'zod';
 
 export const substitutionSchema = z.object({
   ingredientName: z.string().min(1, 'Original ingredient is required'),
@@ -25,6 +25,7 @@ export const substitutionSchema = z.object({
   bestFor: z
     .array(z.string() as z.ZodType<Database['public']['Enums']['substitution_best_for']>)
     .min(1, 'Select at least one use case'),
+  image: z.instanceof(File).optional(),
 });
 
 export type SubstitutionFormValues = z.infer<typeof substitutionSchema>;

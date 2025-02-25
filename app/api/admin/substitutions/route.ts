@@ -1,38 +1,37 @@
 import { createSubstitution } from '@/app/services/substitutionService';
 import { slugify } from '@/app/utils/slugify';
+import { Database } from '@/database.types';
 import { NextResponse } from 'next/server';
-import { SubstitutionFormValues } from '@/app/admin/substitutions/schema';
 
 export async function POST(request: Request) {
   try {
-    const data = await request.json();
+    const formData = await request.formData();
+    const file = formData.get('file') as File | undefined;
 
-    // Validate the incoming data
-    if (!data.fromIngredientId || !data.ingredients?.length) {
-      return NextResponse.json(
-        { error: 'Invalid request data: missing required fields' },
-        { status: 400 }
-      );
-    }
+    // Parse JSON strings back to objects
+    const ingredients = JSON.parse(formData.get('ingredients') as string);
+    const effects = JSON.parse(formData.get('effects') as string);
+    const bestFor = JSON.parse(formData.get('bestFor') as string);
 
     // Create single substitution
     const result = await createSubstitution(
-      data.fromIngredientId,
-      data.ingredients.map(
+      slugify(formData.get('ingredientName') as string),
+      ingredients.map(
         (ing: { ingredientName: string; amount: number; unit: string; notes?: string }) => ({
           ingredientId: slugify(ing.ingredientName),
           amount: ing.amount,
-          unit: ing.unit,
+          unit: ing.unit as Database['public']['Enums']['unit_type'],
           notes: ing.notes,
         })
       ),
       {
-        name: data.name,
-        amount: data.amount,
-        unit: data.unit,
-        rating: data.rating,
-        effects: data.effects,
-        best_for: data.bestFor,
+        name: formData.get('name') as string,
+        amount: Number(formData.get('amount')),
+        unit: formData.get('unit') as Database['public']['Enums']['unit_type'],
+        rating: Number(formData.get('rating')),
+        effects,
+        best_for: bestFor,
+        file,
       }
     );
 

@@ -137,6 +137,7 @@ export type Database = {
           dietary_flags: string[]
           effects: Json | null
           id: string
+          image_url: string | null
           name: string
           notes: string | null
           original_ingredient_id: string
@@ -155,6 +156,7 @@ export type Database = {
           dietary_flags: string[]
           effects?: Json | null
           id: string
+          image_url?: string | null
           name?: string
           notes?: string | null
           original_ingredient_id: string
@@ -173,6 +175,7 @@ export type Database = {
           dietary_flags?: string[]
           effects?: Json | null
           id?: string
+          image_url?: string | null
           name?: string
           notes?: string | null
           original_ingredient_id?: string
