@@ -165,7 +165,7 @@ export function NewIngredientForm() {
   }
 
   return (
-    <div className="container max-w-4xl mx-auto py-10">
+    <div className="container max-w-4xl mx-auto py-10 px-4">
       <BreadcrumbNav items={[{ label: 'Admin', href: '/admin' }, { label: 'New Ingredient' }]} />
 
       <div className="mb-8">

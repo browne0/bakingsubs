@@ -105,7 +105,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full h-full p-0">
+      <DialogContent className="w-full h-full p-0 max-w-full min-w-[325px]">
         <DialogTitle className="sr-only">Search for ingredient</DialogTitle>
         <DialogDescription className="sr-only">Search for ingredient</DialogDescription>
         <div className="flex flex-col h-full">
