@@ -3,7 +3,10 @@ import { formatDistanceToNow } from 'date-fns';
 
 export default async function HowToSection() {
   // Specify the exact slugs of the posts you want to display
-  const posts = await getPostsBySlugs(['the-ultimate-guide-to-flax-eggs']);
+  const posts = await getPostsBySlugs([
+    'the-ultimate-guide-to-flax-eggs',
+    'how-to-make-aquafaba-meringue-at-home',
+  ]);
 
   return (
     <section id="blog-posts" className="py-6">
