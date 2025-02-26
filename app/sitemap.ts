@@ -1,4 +1,5 @@
 import { Database } from '@/database.types';
+import { getPosts } from '@/lib/ghost';
 import { createClient } from '@supabase/supabase-js';
 import { MetadataRoute } from 'next';
 
@@ -28,6 +29,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     throw substitutionsError;
   }
 
+  // Fetch blog posts from Ghost
+  const posts = await getPosts();
+
   // Base URL from environment variable or default
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://bakingsubs.com';
 
@@ -38,15 +42,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/privacy',
     '/terms',
     '/blog',
-    '/guides',
-    '/faq',
     '/ingredients',
     '/support',
+    '/learn',
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: route === '' ? 1 : 0.8,
+  }));
+
+  // Learning section routes
+  const learningRoutes = [
+    '/learn/eggs',
+    '/learn/milk',
+    '/learn/sugar',
+    '/learn/butter',
+    '/learn/flour',
+    '/learn/leaveners',
+    '/learn/oils-fats',
+    '/learn/flavorings',
+  ].map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
   }));
 
   // Dynamic routes for ingredients
@@ -65,5 +85,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...ingredientRoutes, ...substitutionRoutes];
+  // Dynamic routes for blog posts
+  const blogRoutes = posts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.updated_at || post.published_at),
+    changeFrequency: 'weekly' as const,
+    priority: 0.6,
+  }));
+
+  return [
+    ...staticRoutes,
+    ...learningRoutes,
+    ...ingredientRoutes,
+    ...substitutionRoutes,
+    ...blogRoutes,
+  ];
 }
