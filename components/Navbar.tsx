@@ -24,6 +24,12 @@ export function Navbar() {
             About
           </Link>
           <Link
+            href="/blog"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Blog
+          </Link>
+          <Link
             href="/learn"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
@@ -82,6 +88,27 @@ export function Navbar() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Home
+              </Link>
+              <Link
+                href="/about"
+                className="text-xl font-medium text-foreground"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                About
+              </Link>
+              <Link
+                href="/blog"
+                className="text-xl font-medium text-foreground"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Blog
+              </Link>
+              <Link
+                href="/learn"
+                className="text-xl font-medium text-foreground"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Learn
               </Link>
               <Link
                 href="/ingredients"

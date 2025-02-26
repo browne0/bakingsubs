@@ -1,5 +1,6 @@
 'use client';
 
+import BakedGoodsImg from '@/app/images/baked_goods.jpg';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -66,37 +67,48 @@ export function NewsletterPopup() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-serif">Never miss a substitution</DialogTitle>
-          <DialogDescription className="text-base">
-            Join 100+ home bakers who never let a missing ingredient stop their baking. Get weekly
-            insights and exclusive recipes.
-          </DialogDescription>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Input
-              type="email"
-              placeholder="Your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="flex-1"
-              required
+      <DialogContent className="sm:max-w-[800px] flex flex-col">
+        <div className="flex flex-col md:flex-row md:items-center gap-6">
+          <div className="flex-1">
+            <img
+              src={BakedGoodsImg.src}
+              alt="Baking newsletter"
+              className="w-full h-auto rounded-lg object-cover"
             />
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Subscribing...' : 'Subscribe'}
-            </Button>
           </div>
-          <p className="text-sm text-muted-foreground text-center">
-            By subscribing, you agree to our{' '}
-            <a href="/privacy" className="underline hover:text-foreground">
-              privacy policy
-            </a>
-            .
-          </p>
-        </form>
+          <div className="flex-1">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-serif">Never miss a substitution</DialogTitle>
+              <DialogDescription className="text-base">
+                Join 100+ home bakers who never let a missing ingredient stop their baking.
+                <span className="block mt-2">Get weekly insights and exclusive recipes.</span>
+              </DialogDescription>
+            </DialogHeader>
+
+            <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Input
+                  type="email"
+                  placeholder="Your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex-1"
+                  required
+                />
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? 'Subscribing...' : 'Subscribe'}
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground text-center">
+                By subscribing, you agree to our{' '}
+                <a href="/privacy" className="underline hover:text-foreground">
+                  privacy policy
+                </a>
+                .
+              </p>
+            </form>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

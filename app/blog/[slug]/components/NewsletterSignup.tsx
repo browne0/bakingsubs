@@ -45,8 +45,8 @@ export function NewsletterSignup() {
         </h2>
 
         <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-lg mx-auto">
-          Subscribe for community-tested substitutions, baking tips, and weekly updates about our
-          favorite recipes.
+          Subscribe to our newsletter for community-tested substitutions, baking tips, and weekly
+          updates about our favorite recipes.
         </p>
 
         <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-4">
