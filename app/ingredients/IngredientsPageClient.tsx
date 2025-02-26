@@ -79,13 +79,26 @@ export function IngredientsPageClient({ initialIngredients }: IngredientsPageCli
               className="p-4 rounded-lg border border-border hover:border-primary cursor-pointer transition-colors"
               onClick={() => router.push(`/ingredients/${ingredient.id}`)}
             >
-              <h3 className="font-medium mb-2">{ingredient.name}</h3>
-              {ingredient.category && (
-                <p className="text-sm text-muted-foreground">
-                  {CATEGORY_OPTIONS.find((cat) => cat.value === ingredient.category)?.label ||
-                    ingredient.category}
-                </p>
-              )}
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <h3 className="font-medium mb-2">{ingredient.name}</h3>
+                  {ingredient.category && (
+                    <p className="text-sm text-muted-foreground">
+                      {CATEGORY_OPTIONS.find((cat) => cat.value === ingredient.category)?.label ||
+                        ingredient.category}
+                    </p>
+                  )}
+                </div>
+                {ingredient.image_url && (
+                  <div className="w-16 h-16 flex-shrink-0">
+                    <img
+                      src={ingredient.image_url}
+                      alt={ingredient.name}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           ))}
         </div>

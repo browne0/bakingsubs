@@ -1,6 +1,5 @@
 import { Tables } from '@/database.types';
 import { revalidateTag } from 'next/cache';
-import sharp from 'sharp';
 import { slugify } from '../utils/slugify';
 import { createClient } from '../utils/supabase/server';
 
@@ -28,6 +27,13 @@ export async function createIngredient(formData: FormData) {
     notes: formData.get('notes') as string,
     image_url: imageUrl,
     search_count: 0,
+    calories: parseFloat(formData.get('calories') as string) || null,
+    fat: parseFloat(formData.get('fat') as string) || null,
+    carbohydrates: parseFloat(formData.get('carbohydrates') as string) || null,
+    protein: parseFloat(formData.get('protein') as string) || null,
+    sodium: parseFloat(formData.get('sodium') as string) || null,
+    fiber: parseFloat(formData.get('fiber') as string) || null,
+    sugar: parseFloat(formData.get('sugar') as string) || null,
   };
 
   const { data: ingredient, error } = await supabase
@@ -179,26 +185,15 @@ export async function updateIngredient(id: string, data: Partial<Tables<'ingredi
 export async function uploadIngredientImage(file: File) {
   const supabase = await createClient();
 
-  // Convert File to Buffer
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
+  // Generate a unique filename with original extension
+  const extension = file.name.split('.').pop() || 'jpg';
+  const fileName = `${Math.random().toString(36).substring(2)}.${extension}`;
 
-  // Compress image while maintaining original dimensions
-  const compressedImageBuffer = await sharp(buffer)
-    .jpeg({ quality: 80 }) // Convert to JPEG with 80% quality
-    .toBuffer();
-
-  // Generate a unique filename with .jpg extension
-  const fileName = `${Math.random().toString(36).substring(2)}.jpg`;
-
-  // Upload the compressed file to Supabase storage
-  const { error } = await supabase.storage
-    .from('ingredient-images')
-    .upload(fileName, compressedImageBuffer, {
-      contentType: 'image/jpeg',
-      cacheControl: '3600',
-      upsert: false,
-    });
+  // Upload the file directly to Supabase storage
+  const { error } = await supabase.storage.from('ingredient-images').upload(fileName, file, {
+    cacheControl: '3600',
+    upsert: false,
+  });
 
   if (error) throw error;
 

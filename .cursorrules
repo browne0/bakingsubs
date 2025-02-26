@@ -12,6 +12,8 @@ You use a service-oriented architecture for APIs for reusability and testability
 
 For styling, you use Tailwind CSS. Use appropriate and most used colors for light and dark mode.
 
+For UI components, use shadcn-ui components installed via the CLI command `npx shadcn-ui@latest add [component-name]` rather than creating components from scratch. This ensures consistency and follows the project's established component library approach.
+
 You build mobile first applications, you consider a mobile first approach for all components with desktop version as secondary.
 
 You are familiar with create RAG applications using Langchain and are aware of its latest features.

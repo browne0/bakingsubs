@@ -113,7 +113,7 @@ export function SubstitutionPageClient({ substitution }: SubstitutionPageClientP
       {/* Hero Section */}
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-background" />
-        <div className="container max-w-4xl mx-auto py-8 px-4 relative">
+        <div className="container max-w-5xl mx-auto py-8 px-4 relative">
           <BreadcrumbNav
             items={[
               { label: 'Home', href: '/' },
@@ -133,21 +133,37 @@ export function SubstitutionPageClient({ substitution }: SubstitutionPageClientP
           />
 
           <div className="mt-6 space-y-6">
-            <h1 className="text-3xl md:text-4xl font-bold">
-              Substituting {substitution.from_ingredient.name} with{' '}
-              <span className="text-primary">{substitution.name}</span>
-            </h1>
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="flex-1 space-y-6">
+                <h1 className="text-3xl md:text-4xl font-bold">
+                  Substituting {substitution.from_ingredient.name} with{' '}
+                  <span className="text-primary">{substitution.name}</span>
+                </h1>
 
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <StarRating rating={substitution.rating} className="text-xl" />
-                <span className="text-sm text-muted-foreground">
-                  {substitution.rating.toFixed(1)} ({substitution.rating_count})
-                </span>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <StarRating rating={substitution.rating} className="text-xl" />
+                    <span className="text-sm text-muted-foreground">
+                      {substitution.rating.toFixed(1)} ({substitution.rating_count})
+                    </span>
+                  </div>
+
+                  {!isDesktop && <DietaryTags />}
+                  <AllergenTags />
+                </div>
               </div>
 
-              {!isDesktop && <DietaryTags />}
-              <AllergenTags />
+              {substitution.image_url && (
+                <div className="md:w-1/3">
+                  <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg">
+                    <img
+                      src={substitution.image_url}
+                      alt={`${substitution.from_ingredient.name} substituted with ${substitution.name}`}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -155,7 +171,7 @@ export function SubstitutionPageClient({ substitution }: SubstitutionPageClientP
 
       {/* Sticky Navigation */}
       <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b">
-        <div className="container max-w-4xl mx-auto px-4">
+        <div className="container max-w-5xl mx-auto px-4">
           <nav className="flex gap-6 overflow-x-auto">
             {sections.map((section) => (
               <a
@@ -171,7 +187,7 @@ export function SubstitutionPageClient({ substitution }: SubstitutionPageClientP
       </div>
 
       {/* Main Content */}
-      <div className="container max-w-4xl mx-auto px-4 py-8">
+      <div className="container max-w-5xl mx-auto px-4 py-8">
         {isDesktop ? (
           // Desktop Layout
           <div className="grid gap-8 md:grid-cols-3">
@@ -305,7 +321,7 @@ export function SubstitutionPageClient({ substitution }: SubstitutionPageClientP
         )}
       </div>
 
-      <section className="container max-w-4xl mx-auto px-4 py-8">
+      <section className="container max-w-5xl mx-auto px-4 py-8">
         <RateSubstitution substitutionId={substitution.id} currentRating={substitution.rating} />
       </section>
     </>

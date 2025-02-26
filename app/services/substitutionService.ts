@@ -364,6 +364,7 @@ export async function getEggSubstitutions() {
       best_for,
       rating,
       description: notes,
+      image_url,
       substitution_ingredients (
         amount,
         unit,

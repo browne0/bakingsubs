@@ -1,5 +1,6 @@
 import { getEggSubstitutions } from '@/app/services/substitutionService';
 import { decimalToFraction } from '@/app/utils/fractions';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default async function SubstitutesGrid() {
@@ -27,10 +28,12 @@ export default async function SubstitutesGrid() {
                        dark:border-gray-700 overflow-hidden"
             >
               <div className="aspect-video relative">
-                <img
-                  src="https://placehold.co/400x600"
+                <Image
+                  src={sub.image_url || 'https://placehold.co/400x600'}
                   alt={sub.name}
-                  className="object-cover w-full h-full"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
 

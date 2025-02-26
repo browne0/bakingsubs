@@ -82,7 +82,7 @@ export function NewIngredientForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  const form = useForm<z.infer<typeof schema>>({
+  const form = useForm<NewIngredientFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: '',
@@ -93,11 +93,13 @@ export function NewIngredientForm() {
       allergens: [],
       default_unit: 'g',
       notes: '',
-      image: undefined as File | undefined,
     },
   });
 
   const progress = ((currentStep + 1) / steps.length) * 100;
+
+  const { watch } = form;
+  const name = watch('name');
 
   // Check if current step is valid
   const isCurrentStepValid = async () => {
@@ -121,21 +123,21 @@ export function NewIngredientForm() {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   };
 
-  async function onSubmit(data: z.infer<typeof schema>) {
+  async function onSubmit(data: NewIngredientFormValues) {
     try {
       setIsSubmitting(true);
       form.clearErrors();
 
       const formData = new FormData();
       Object.entries(data).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          formData.append(key, Array.isArray(value) ? JSON.stringify(value) : value.toString());
+        if (key === 'image' && value instanceof File) {
+          formData.append('file', value);
+        } else if (Array.isArray(value)) {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value as string);
         }
       });
-
-      if (data.image) {
-        formData.append('file', data.image);
-      }
 
       const response = await fetch('/api/admin/ingredients', {
         method: 'POST',
@@ -171,7 +173,7 @@ export function NewIngredientForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <Card className="p-6">
             {currentStep === 0 && (
               <div className="space-y-4">
