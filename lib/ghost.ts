@@ -108,6 +108,17 @@ export async function getPost(slug: string) {
   )) as GhostPost;
 }
 
+export async function getPostsBySlugs(slugs: string[]) {
+  const posts = (await ghost.posts.browse({
+    limit: 'all',
+    include: ['tags', 'authors'],
+    filter: `slug:[${slugs.join(',')}]`,
+  })) as GhostPost[];
+
+  // Sort posts to match the order of requested slugs
+  return posts.sort((a, b) => slugs.indexOf(a.slug) - slugs.indexOf(b.slug));
+}
+
 export async function getRecentPosts(limit: number = 3) {
   return (await ghost.posts.browse({
     limit: limit,

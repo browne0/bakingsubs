@@ -18,6 +18,7 @@ declare module '@tryghost/content-api' {
         page?: number;
         order?: string;
         include?: string[];
+        filter?: string;
       }): Promise<T[]>;
       read<T = any>(data: { slug: string }, options?: { include?: string[] }): Promise<T>;
     };
