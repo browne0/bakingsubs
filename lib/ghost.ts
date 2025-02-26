@@ -27,23 +27,67 @@ const ghost = new GhostContentAPI({
   },
 });
 
+export type GhostAuthor = {
+  id: string;
+  name: string;
+  slug: string;
+  profile_image: string | null;
+  cover_image: string | null;
+  bio: string | null;
+  website: string | null;
+  location: string | null;
+  facebook: string | null;
+  twitter: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  url: string;
+};
+
+export type GhostTag = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
 export type GhostPost = {
   id: string;
+  uuid: string;
   slug: string;
   title: string;
   html: string;
+  comment_id: string;
   feature_image: string | null;
-  excerpt: string;
-  custom_excerpt: string;
-  reading_time: number;
-  published_at: string;
+  feature_image_alt: string | null;
+  feature_image_caption: string | null;
+  featured: boolean;
+  visibility: string;
   created_at: string;
   updated_at: string;
-  tags: Array<{
-    id: string;
-    name: string;
-    slug: string;
-  }>;
+  published_at: string;
+  custom_excerpt: string | null;
+  codeinjection_head: string | null;
+  codeinjection_foot: string | null;
+  custom_template: string | null;
+  canonical_url: string | null;
+  tags: GhostTag[];
+  authors: GhostAuthor[];
+  primary_author: GhostAuthor;
+  primary_tag: GhostTag | null;
+  url: string;
+  excerpt: string;
+  reading_time: number;
+  access: boolean;
+  comments: boolean;
+  og_image: string | null;
+  og_title: string | null;
+  og_description: string | null;
+  twitter_image: string | null;
+  twitter_title: string | null;
+  twitter_description: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  email_subject: string | null;
+  frontmatter: string | null;
 };
 
 export async function getPosts() {

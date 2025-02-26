@@ -30,8 +30,8 @@ const footerLinks = {
 export function Footer() {
   return (
     <footer className="border-t">
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        <div className="flex flex-col space-y-8 md:space-y-0 md:grid md:grid-cols-12 md:gap-8">
+      <div className="py-8">
+        <div className="container mx-auto px-4 flex flex-col space-y-8 md:space-y-0 md:grid md:grid-cols-12 md:gap-8">
           {/* Logo and Description Column */}
           <div className="md:col-span-4">
             <Link href="/" className="inline-block">

@@ -124,3 +124,16 @@ body {
   scroll-behavior: smooth;
   scroll-padding-top: 56px; /* Account for sticky header */
 }
+
+.blog-content > div > p:first-child {
+  margin-top: 0;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
