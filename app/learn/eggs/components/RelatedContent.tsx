@@ -1,27 +1,45 @@
-const relatedTopics = [
-  {
-    title: 'Milk',
-    description: 'Learn how milk enriches, tenderizes, and browns your baked creations.',
-    image: 'https://placehold.co/400x600',
-    href: '/learn/milk',
-  },
-  {
-    title: 'Flour',
-    description: 'Discover gluten-free and alternative flour options for baking.',
-    image: 'https://placehold.co/400x600',
-    href: '/learn/flour',
-  },
-  {
-    title: 'Sugar',
-    description: 'Explore natural sweeteners and sugar alternatives.',
-    image: 'https://placehold.co/400x600',
-    href: '/learn/sugar',
-  },
-];
+import { StaticImageData } from 'next/image';
+import Link from 'next/link';
+import { substitutionCategories } from '../../page';
+
+type SubstitutionCategory = {
+  title: string;
+  image: string | StaticImageData;
+  href: string;
+  status: 'complete' | 'coming-soon';
+};
+
+function getRandomCategories(
+  categories: SubstitutionCategory[],
+  count: number
+): SubstitutionCategory[] {
+  // First, separate complete and coming-soon categories
+  const complete = categories.filter((cat) => cat.status === 'complete');
+  const comingSoon = categories.filter((cat) => cat.status === 'coming-soon');
+
+  // Shuffle both arrays
+  const shuffledComplete = [...complete].sort(() => Math.random() - 0.5);
+  const shuffledComingSoon = [...comingSoon].sort(() => Math.random() - 0.5);
+
+  // Take all complete ones first, then fill remaining with coming-soon
+  const result = [...shuffledComplete];
+  while (result.length < count && shuffledComingSoon.length > 0) {
+    result.push(shuffledComingSoon.pop()!);
+  }
+
+  // If we still need more, take from complete again (unlikely in this case)
+  while (result.length < count && shuffledComplete.length > 0) {
+    result.push(shuffledComplete.pop()!);
+  }
+
+  return result.slice(0, count);
+}
 
 export default function RelatedContent() {
+  const relatedTopics = getRandomCategories(substitutionCategories, 3);
+
   return (
-    <section className="py-6 bg-gray-50 dark:bg-gray-900/50">
+    <section className="py-6">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
           Explore More Baking Substitutions
@@ -32,34 +50,51 @@ export default function RelatedContent() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {relatedTopics.map((topic) => (
-            <a
-              key={topic.title}
-              href={topic.href}
-              className="group relative block bg-white dark:bg-gray-800 rounded-lg 
-                       overflow-hidden shadow-sm hover:shadow-md transition-all 
-                       border border-gray-200 dark:border-gray-700"
-            >
-              <div className="aspect-[16/9] relative">
-                <img src={topic.image} alt={topic.title} className="object-cover w-full h-full" />
-                <div
-                  className="absolute inset-0 bg-gradient-to-t from-black/60 
-                              to-transparent group-hover:from-black/70 transition-all"
-                />
-
-                <div className="absolute bottom-0 p-6 text-white">
-                  <h3
-                    className="text-xl font-semibold mb-2 group-hover:text-blue-200 
-                               transition-colors"
-                  >
-                    {topic.title}
-                  </h3>
-                  <p className="text-sm text-gray-200">{topic.description}</p>
+            <div key={topic.title} className="relative group">
+              {topic.status === 'complete' ? (
+                <Link href={topic.href} className="block">
+                  <CategoryCard {...topic} />
+                </Link>
+              ) : (
+                <div className="cursor-not-allowed">
+                  <CategoryCard {...topic} />
                 </div>
-              </div>
-            </a>
+              )}
+            </div>
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function CategoryCard({
+  title,
+  image,
+  status,
+}: {
+  title: string;
+  image: StaticImageData | string;
+  status: 'complete' | 'coming-soon';
+}) {
+  return (
+    <div className="relative overflow-hidden rounded-xl">
+      <img
+        src={typeof image === 'string' ? image : image.src}
+        alt={title}
+        className="object-fit aspect-[16/9]"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/0" />
+
+      <div className="absolute inset-x-0 bottom-0 p-4">
+        <h2 className="text-xl md:text-2xl font-bold text-white">{title}</h2>
+      </div>
+
+      {status === 'coming-soon' && (
+        <div className="absolute top-4 right-4 bg-black/80 text-white px-3 py-1 rounded-full text-sm font-medium">
+          Coming Soon
+        </div>
+      )}
+    </div>
   );
 }

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     'Discover how to substitute common baking ingredients. From eggs to flour, find the right alternatives for your dietary needs and preferences.',
 };
 
-const substitutionCategories: {
+export const substitutionCategories: {
   title: string;
   image: string | StaticImageData;
   href: string;
