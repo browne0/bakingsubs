@@ -87,7 +87,7 @@ export default async function BlogPost({ params }: { params: { slug: string } })
                 {post.primary_tag && (
                   <>
                     <span>›</span>
-                    <Link href={`/tag/${post.primary_tag.slug}`} className="text-red-600">
+                    <Link href={`/blog/tags/${post.primary_tag.slug}`} className="text-red-600">
                       {post.primary_tag.name.toUpperCase()}
                     </Link>
                   </>

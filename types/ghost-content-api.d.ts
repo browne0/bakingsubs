@@ -22,5 +22,15 @@ declare module '@tryghost/content-api' {
       }): Promise<T[]>;
       read<T = any>(data: { slug: string }, options?: { include?: string[] }): Promise<T>;
     };
+
+    tags: {
+      browse<T = any>(options?: {
+        limit?: number | 'all';
+        page?: number;
+        order?: string;
+        include?: string[];
+      }): Promise<T[]>;
+      read<T = any>(data: { slug: string }): Promise<T>;
+    };
   }
 }

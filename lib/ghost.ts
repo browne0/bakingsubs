@@ -125,3 +125,17 @@ export async function getRecentPosts(limit: number = 3) {
     include: ['tags', 'authors'],
   })) as GhostPost[];
 }
+
+export async function getPostsByTag(tag: string) {
+  return (await ghost.posts.browse({
+    limit: 'all',
+    include: ['tags', 'authors'],
+    filter: `tag:${tag}`,
+  })) as GhostPost[];
+}
+
+export async function getAllTags() {
+  return (await ghost.tags.browse({
+    limit: 'all',
+  })) as GhostTag[];
+}

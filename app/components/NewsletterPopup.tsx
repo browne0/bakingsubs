@@ -67,16 +67,16 @@ export function NewsletterPopup() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[800px] flex flex-col">
+      <DialogContent className="max-w-[90vw] md:max-w-[800px] flex flex-col">
         <div className="flex flex-col md:flex-row md:items-center gap-6">
-          <div className="flex-1">
+          <div className="flex-1 md:p-6">
             <img
               src={BakedGoodsImg.src}
               alt="Baking newsletter"
-              className="w-full h-auto rounded-lg object-cover"
+              className="w-full h-auto md:rounded-lg object-cover"
             />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 p-6 pt-0">
             <DialogHeader>
               <DialogTitle className="text-2xl font-serif">Never miss a substitution</DialogTitle>
               <DialogDescription className="text-base">

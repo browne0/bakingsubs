@@ -1,6 +1,13 @@
 'use client';
 
+import { BreadcrumbNav } from '@/components/BreadcrumbNav';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
   Table,
@@ -12,20 +19,12 @@ import {
 } from '@/components/ui/table';
 import { Tables } from '@/database.types';
 import { useQuery } from '@tanstack/react-query';
+import debounce from 'lodash/debounce';
 import { MoreHorizontal, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { CATEGORY_OPTIONS } from '../../constants';
-import debounce from 'lodash/debounce';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { BreadcrumbNav } from '@/components/BreadcrumbNav';
+import { CATEGORY_OPTIONS } from '../../constants';
 
 interface AdminIngredientsClientProps {
   initialIngredients: Tables<'ingredients'>[];
@@ -33,7 +32,6 @@ interface AdminIngredientsClientProps {
 
 export function AdminIngredientsClient({ initialIngredients }: AdminIngredientsClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const router = useRouter();
 
   const { data: ingredients = initialIngredients, isLoading } = useQuery({
     queryKey: ['admin-ingredients', searchQuery],

@@ -113,6 +113,8 @@ export async function searchIngredients(query: string): Promise<Tables<'ingredie
 
   const { data, error } = await queryBuilder;
 
+  console.log(data);
+
   if (error) throw error;
   return data;
 }
