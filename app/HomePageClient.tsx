@@ -1,5 +1,6 @@
 'use client';
 
+import BackgroundImage from '@/app/images/bg.webp';
 import { SearchDialog } from '@/components/SearchDialog';
 import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
@@ -15,6 +16,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { useQuery } from '@tanstack/react-query';
 import debounce from 'lodash/debounce';
 import { CheckCircle, ChevronRight, Search, UtensilsCrossed } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -114,129 +116,98 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
   }, []);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <div className="container py-16 mx-auto sm:px-6 lg:px-8">
-        {/* Updated Hero Section */}
-        <section className="min-h-[50vh] mx-auto text-center flex flex-col items-center justify-center px-4 sm:px-6">
-          {/* Trust Badge */}
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 mb-6 sm:mb-8 bg-primary/10 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full">
-            <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-            <span className="text-xs sm:text-sm text-muted-foreground">
-              Trusted by 100+ home bakers
-            </span>
-          </div>
+    <main className="min-h-screen mb-16">
+      {/* Hero Section with Background Image */}
+      <section className="relative min-h-[60vh] md:min-h-[55vh] flex items-center">
+        {/* Background Image */}
+        <Image
+          src={BackgroundImage}
+          alt="Baking background"
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+          quality={90}
+        />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/60 z-[1]" />
 
-          <h1 className="text-2xl sm:text-3xl md:text-4xl tracking-tight font-[500] max-w-[90%] sm:max-w-none">
-            <span className="font-bold">Rescue Your Recipe With</span>
-            <span className="block text-primary mt-1.5 sm:mt-2 font-bold">
-              Ingredients From Your Pantry
-            </span>
-          </h1>
+        {/* Content */}
+        <div className="container relative z-[2] py-8 sm:py-16 mx-auto px-4">
+          <div className="max-w-2xl">
+            {/* Trust Badge */}
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 mb-4 sm:mb-8 bg-white/10 backdrop-blur-sm px-2.5 sm:px-4 py-1 sm:py-2 rounded-full">
+              <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
+              <span className="text-[11px] sm:text-sm text-white/90 drop-shadow-md">
+                Trusted by 100+ home bakers
+              </span>
+            </div>
 
-          <p className="mt-4 sm:mt-6 text-base sm:text-lg leading-7 sm:leading-8 text-muted-foreground max-w-[95%] sm:max-w-2xl mx-auto">
-            Find detailed, community-tested baking substitutions for your bake in seconds.
-          </p>
+            <h1 className="text-[28px] sm:text-3xl md:text-4xl tracking-tight font-[500] text-shadow">
+              <span className="font-bold text-white leading-tight">Rescue Your Recipe With</span>
+              <span className="block text-white mt-1 sm:mt-2 font-bold leading-tight">
+                Ingredients From Your Pantry
+              </span>
+            </h1>
 
-          {/* Search Section with enhanced styling */}
-          <div className="max-w-2xl w-full mx-auto mt-8 sm:mt-10">
-            <div className="relative flex shadow-xl rounded-lg border-2 border-primary/20">
-              {isDesktop ? (
-                <div className="relative w-full">
-                  <div className="flex">
-                    <div className="relative flex-1">
-                      <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                      <input
-                        ref={inputRef}
-                        type="text"
-                        placeholder="Which ingredient are you missing?"
-                        className="w-full h-16 pl-12 pr-4 text-lg rounded-l-lg bg-background placeholder:text-muted-foreground"
-                        onChange={(e) => debouncedQuery(e.target.value)}
-                        onFocus={() => setIsOpen(true)}
-                        role="combobox"
-                        aria-expanded={isOpen}
-                        aria-controls="search-commands"
-                      />
-                      {isOpen && (
-                        <div
-                          ref={commandRef}
-                          className="absolute top-[calc(100%+4px)] left-0 w-full border rounded-md bg-popover shadow-md z-50"
-                          id="search-commands"
-                        >
-                          <Command className="[&_[cmdk-group-heading]]:text-left [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground">
-                            <CommandList>
-                              {isLoading ? (
-                                <CommandGroup heading="Searching...">
-                                  {[...Array(3)].map((_, i) => (
-                                    <CommandItem
-                                      key={i}
-                                      className="flex items-center justify-between p-2 gap-2"
-                                    >
-                                      <div className="flex items-center gap-2 flex-1">
+            <p className="mt-3 sm:mt-6 text-[15px] sm:text-lg leading-[1.6] sm:leading-8 text-white/90 max-w-xl text-shadow">
+              Find detailed, community-tested baking substitutions for your bake in seconds.
+            </p>
+
+            {/* Search Section */}
+            <div className="mt-6 sm:mt-10">
+              <div className="relative flex shadow-xl rounded-lg">
+                {isDesktop ? (
+                  <div className="relative w-full">
+                    <div className="flex">
+                      <div className="relative flex-1">
+                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                        <input
+                          ref={inputRef}
+                          type="text"
+                          placeholder="Which ingredient are you missing?"
+                          className="w-full h-16 pl-12 pr-4 text-lg rounded-l-lg bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-0 border-none"
+                          onChange={(e) => debouncedQuery(e.target.value)}
+                          onFocus={() => setIsOpen(true)}
+                          role="combobox"
+                          aria-expanded={isOpen}
+                          aria-controls="search-commands"
+                        />
+                        {isOpen && (
+                          <div
+                            ref={commandRef}
+                            className="absolute top-[calc(100%+4px)] left-0 w-full border rounded-md bg-popover shadow-md z-50"
+                            id="search-commands"
+                          >
+                            <Command className="[&_[cmdk-group-heading]]:text-left [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground">
+                              <CommandList>
+                                {isLoading ? (
+                                  <CommandGroup heading="Searching...">
+                                    {[...Array(3)].map((_, i) => (
+                                      <CommandItem
+                                        key={i}
+                                        className="flex items-center justify-between p-2 gap-2"
+                                      >
+                                        <div className="flex items-center gap-2 flex-1">
+                                          <div className="h-4 w-4 bg-muted animate-pulse rounded" />
+                                          <div className="h-4 w-32 bg-muted animate-pulse rounded" />
+                                        </div>
                                         <div className="h-4 w-4 bg-muted animate-pulse rounded" />
-                                        <div className="h-4 w-32 bg-muted animate-pulse rounded" />
-                                      </div>
-                                      <div className="h-4 w-4 bg-muted animate-pulse rounded" />
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              ) : (
-                                <>
-                                  <CommandEmpty className="py-6 text-center text-sm">
-                                    No ingredients found
-                                  </CommandEmpty>
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                ) : (
+                                  <>
+                                    <CommandEmpty className="py-6 text-center text-sm">
+                                      No ingredients found
+                                    </CommandEmpty>
 
-                                  {searchResults.length > 0 && (
-                                    <CommandGroup heading="Search results">
-                                      {searchResults.map((ingredient) => (
-                                        <CommandItem
-                                          key={ingredient.id}
-                                          value={`search-${ingredient.name}`}
-                                          onSelect={() => {
-                                            addToRecentSearches(ingredient);
-                                            router.push(`/ingredients/${ingredient.id}`);
-                                            setIsOpen(false);
-                                          }}
-                                          className="flex items-center justify-between p-2 rounded-sm cursor-pointer hover:bg-accent"
-                                        >
-                                          <div className="flex items-center gap-2">
-                                            <UtensilsCrossed className="h-4 w-4" />
-                                            <span>{ingredient.name}</span>
-                                          </div>
-                                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                                        </CommandItem>
-                                      ))}
-                                    </CommandGroup>
-                                  )}
-
-                                  {!searchQuery && (
-                                    <>
-                                      {recentSearches.length > 0 && (
-                                        <CommandGroup heading="Recent searches">
-                                          {recentSearches.map((search) => (
-                                            <CommandItem
-                                              key={search.id}
-                                              value={`recent-${search.name}`}
-                                              onSelect={() => {
-                                                router.push(`/ingredients/${search.id}`);
-                                                setIsOpen(false);
-                                              }}
-                                              className="flex items-center justify-between p-2 rounded-sm cursor-pointer hover:bg-accent"
-                                            >
-                                              <div className="flex items-center gap-2">
-                                                <UtensilsCrossed className="h-4 w-4" />
-                                                <span>{search.name}</span>
-                                              </div>
-                                              <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                                            </CommandItem>
-                                          ))}
-                                        </CommandGroup>
-                                      )}
-
-                                      <CommandGroup heading="Common ingredients">
-                                        {commonIngredients.map((ingredient) => (
+                                    {searchResults.length > 0 && (
+                                      <CommandGroup heading="Search results">
+                                        {searchResults.map((ingredient) => (
                                           <CommandItem
                                             key={ingredient.id}
-                                            value={`common-${ingredient.name}`}
+                                            value={`search-${ingredient.name}`}
                                             onSelect={() => {
                                               addToRecentSearches(ingredient);
                                               router.push(`/ingredients/${ingredient.id}`);
@@ -252,107 +223,156 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
                                           </CommandItem>
                                         ))}
                                       </CommandGroup>
-                                    </>
-                                  )}
-                                </>
-                              )}
-                            </CommandList>
-                          </Command>
-                        </div>
-                      )}
+                                    )}
+
+                                    {!searchQuery && (
+                                      <>
+                                        {recentSearches.length > 0 && (
+                                          <CommandGroup heading="Recent searches">
+                                            {recentSearches.map((search) => (
+                                              <CommandItem
+                                                key={search.id}
+                                                value={`recent-${search.name}`}
+                                                onSelect={() => {
+                                                  router.push(`/ingredients/${search.id}`);
+                                                  setIsOpen(false);
+                                                }}
+                                                className="flex items-center justify-between p-2 rounded-sm cursor-pointer hover:bg-accent"
+                                              >
+                                                <div className="flex items-center gap-2">
+                                                  <UtensilsCrossed className="h-4 w-4" />
+                                                  <span>{search.name}</span>
+                                                </div>
+                                                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                                              </CommandItem>
+                                            ))}
+                                          </CommandGroup>
+                                        )}
+
+                                        <CommandGroup heading="Common ingredients">
+                                          {commonIngredients.map((ingredient) => (
+                                            <CommandItem
+                                              key={ingredient.id}
+                                              value={`common-${ingredient.name}`}
+                                              onSelect={() => {
+                                                addToRecentSearches(ingredient);
+                                                router.push(`/ingredients/${ingredient.id}`);
+                                                setIsOpen(false);
+                                              }}
+                                              className="flex items-center justify-between p-2 rounded-sm cursor-pointer hover:bg-accent"
+                                            >
+                                              <div className="flex items-center gap-2">
+                                                <UtensilsCrossed className="h-4 w-4" />
+                                                <span>{ingredient.name}</span>
+                                              </div>
+                                              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                                            </CommandItem>
+                                          ))}
+                                        </CommandGroup>
+                                      </>
+                                    )}
+                                  </>
+                                )}
+                              </CommandList>
+                            </Command>
+                          </div>
+                        )}
+                      </div>
+                      <button className="px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-r-lg">
+                        <Search className="h-5 w-5" />
+                      </button>
                     </div>
-                    <button className="px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-r-lg">
-                      <Search className="h-5 w-5" />
-                    </button>
                   </div>
+                ) : (
+                  <>
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                    <Button
+                      variant="outline"
+                      className="w-full pl-10 h-12 sm:h-14 justify-start font-normal text-muted-foreground text-base sm:text-lg"
+                      onClick={() => setOpen(true)}
+                    >
+                      Which ingredient are you missing?
+                    </Button>
+                    <SearchDialog open={open} onOpenChange={setOpen} />
+                  </>
+                )}
+              </div>
+
+              {/* Feature Badges */}
+              <div className="flex flex-col sm:flex-row justify-start gap-3 sm:gap-6 mt-4 sm:mt-6 text-xs sm:text-sm text-white/90 drop-shadow-md">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-[10px] sm:text-xs text-white text-shadow">
+                    ✓
+                  </span>
+                  <span>50+ Ingredients</span>
                 </div>
-              ) : (
-                <>
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                  <Button
-                    variant="outline"
-                    className="w-full pl-10 h-12 sm:h-14 justify-start font-normal text-muted-foreground text-base sm:text-lg"
-                    onClick={() => setOpen(true)}
-                  >
-                    Which ingredient are you missing?
-                  </Button>
-                  <SearchDialog open={open} onOpenChange={setOpen} />
-                </>
-              )}
-            </div>
-
-            {/* Feature Badges */}
-            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-6 mt-4 sm:mt-6 text-xs sm:text-sm text-muted-foreground">
-              <div className="flex items-center gap-1.5 sm:gap-2 justify-center">
-                <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-green-500/20 flex items-center justify-center text-[10px] sm:text-xs">
-                  ✓
-                </span>
-                <span>50+ Ingredients</span>
-              </div>
-              <div className="flex items-center gap-1.5 sm:gap-2 justify-center">
-                <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-green-500/20 flex items-center justify-center text-[10px] sm:text-xs">
-                  ✓
-                </span>
-                <span>Community Verified</span>
-              </div>
-              <div className="flex items-center gap-1.5 sm:gap-2 justify-center">
-                <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-green-500/20 flex items-center justify-center text-[10px] sm:text-xs">
-                  ✓
-                </span>
-                <span>Free to Use</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Video Demo Section in its own container */}
-        <section className="mt-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              {/* Text Content */}
-              <div className="text-left">
-                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                  Never let a missing ingredient stop your baking.
-                </h2>
-                <p className="mt-4 text-lg text-muted-foreground">
-                  Choose from over 50+ proven baking substitutions, share your solutions, and become
-                  a more confident baker. Your perfect alternative is just one search away.
-                </p>
-              </div>
-
-              {/* Video Container with Badge */}
-              <div>
-                <div className="rounded-xl overflow-hidden shadow-2xl">
-                  <div className="aspect-video">
-                    <video className="w-full h-full object-cover" autoPlay muted loop playsInline>
-                      <source src="/demo.mp4" type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
-                  </div>
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-[10px] sm:text-xs text-white text-shadow">
+                    ✓
+                  </span>
+                  <span>Community Verified</span>
                 </div>
-
-                {/* Product Hunt Badge - Centered below video */}
-                <div className="flex justify-center">
-                  <a
-                    href="https://www.producthunt.com/posts/bakingsubs"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block mt-6 transform hover:scale-105 transition-transform duration-200"
-                  >
-                    <img
-                      src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=270&theme=light"
-                      alt="Featured on Product Hunt"
-                      className="h-12"
-                    />
-                  </a>
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-[10px] sm:text-xs text-white text-shadow">
+                    ✓
+                  </span>
+                  <span>Free to Use</span>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Updated Popular Ingredients Section */}
-        <section className="mt-24">
+      {/* Video Demo Section in its own container */}
+      <section className="mt-24">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            {/* Text Content */}
+            <div className="text-left">
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                Never let a missing ingredient stop your baking.
+              </h2>
+              <p className="mt-4 text-lg text-muted-foreground">
+                Choose from over 50+ proven baking substitutions, share your solutions, and become a
+                more confident baker. Your perfect alternative is just one search away.
+              </p>
+            </div>
+
+            {/* Video Container with Badge */}
+            <div>
+              <div className="rounded-xl overflow-hidden shadow-2xl">
+                <div className="aspect-video">
+                  <video className="w-full h-full object-cover" autoPlay muted loop playsInline>
+                    <source src="/demo.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </div>
+
+              {/* Product Hunt Badge - Centered below video */}
+              <div className="flex justify-center">
+                <a
+                  href="https://www.producthunt.com/posts/bakingsubs"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-6 transform hover:scale-105 transition-transform duration-200"
+                >
+                  <img
+                    src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=270&theme=light"
+                    alt="Featured on Product Hunt"
+                    className="h-12"
+                  />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Updated Popular Ingredients Section */}
+      <section className="mt-24">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-10">
             <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
               Popular Ingredient Alternatives
@@ -370,7 +390,7 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
               containScroll: false,
               slidesToScroll: 1,
             }}
-            className="w-full max-w-7xl mx-auto"
+            className="w-full"
           >
             <CarouselContent className="-ml-2 md:-ml-4">
               {commonIngredients.map((ingredient, index) => (
@@ -402,8 +422,8 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
               ))}
             </CarouselContent>
           </Carousel>
-        </section>
-      </div>
+        </div>
+      </section>
     </main>
   );
 }

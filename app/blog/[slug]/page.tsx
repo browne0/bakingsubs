@@ -75,33 +75,41 @@ export default async function BlogPost({ params }: { params: { slug: string } })
           />
         </div>
 
-        {/* Header Content */}
+        {/* Desktop Header Content */}
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Left Column: Nav, Title, Excerpt */}
             <div className="lg:col-span-7">
-              <nav className="flex items-center justify-center lg:justify-start space-x-2 text-sm mb-6">
-                <Link href="/blog" className="text-red-600">
-                  BLOG
+              <nav className="flex items-center space-x-2 text-sm mb-8">
+                <Link
+                  href="/blog"
+                  className="text-red-600 hover:text-red-700 transition-colors uppercase tracking-wider font-medium"
+                >
+                  Blog
                 </Link>
                 {post.primary_tag && (
                   <>
-                    <span>›</span>
-                    <Link href={`/blog/tags/${post.primary_tag.slug}`} className="text-red-600">
-                      {post.primary_tag.name.toUpperCase()}
+                    <span className="text-gray-400">›</span>
+                    <Link
+                      href={`/blog/tags/${post.primary_tag.slug}`}
+                      className="text-red-600 hover:text-red-700 transition-colors uppercase tracking-wider font-medium"
+                    >
+                      {post.primary_tag.name}
                     </Link>
                   </>
                 )}
               </nav>
 
-              <h1 className="font-serif text-4xl mb-4 text-center lg:text-left">{post.title}</h1>
-              <p className="text-xl text-gray-700 mb-6 text-center lg:text-left">
+              <h1 className="font-serif text-5xl leading-tight mb-6 tracking-tight">
+                {post.title}
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
                 {post.custom_excerpt || post.excerpt}
               </p>
 
               {/* Author and Date */}
-              <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between py-4 border-t space-y-4 lg:space-y-0">
-                <div className="flex flex-col lg:flex-row items-center lg:items-start space-y-2 lg:space-y-0 lg:space-x-4">
+              <div className="flex items-center justify-between py-6 border-t border-gray-200">
+                <div className="flex items-center space-x-4">
                   <Image
                     src={post.primary_author.profile_image || 'https://placehold.co/96x96'}
                     alt={`${post.primary_author.name}'s profile picture`}
@@ -109,17 +117,25 @@ export default async function BlogPost({ params }: { params: { slug: string } })
                     height={48}
                     className="rounded-full object-cover aspect-square"
                   />
-                  <div className="text-center lg:text-left">
-                    <div className="font-medium text-sm text-gray-600">AUTHOR</div>
+                  <div>
+                    <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                      Author
+                    </div>
                     <h2 className="font-serif text-lg">{post.primary_author.name}</h2>
                     {post.primary_author.bio && (
-                      <div className="text-xs text-gray-600">{post.primary_author.bio}</div>
+                      <div className="text-sm text-gray-600 mt-1 line-clamp-2">
+                        {post.primary_author.bio}
+                      </div>
                     )}
                   </div>
                 </div>
-                <div className="text-center lg:text-right">
-                  <div className="font-medium text-sm text-gray-600">DATE</div>
-                  <div>{format(new Date(post.published_at), 'MMMM d, yyyy')}</div>
+                <div className="text-right">
+                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                    Date
+                  </div>
+                  <div className="text-gray-900">
+                    {format(new Date(post.published_at), 'MMMM d, yyyy')}
+                  </div>
                 </div>
               </div>
 
@@ -129,20 +145,22 @@ export default async function BlogPost({ params }: { params: { slug: string } })
 
             {/* Right Column: Featured Image */}
             <div className="hidden lg:block lg:col-span-5">
-              <div className="h-full">
-                <Image
-                  src={post.feature_image || 'https://placehold.co/800x600'}
-                  alt={post.feature_image_alt || post.title}
-                  width={800}
-                  height={600}
-                  className=" object-cover rounded-lg aspect-[6/4]"
-                  priority
-                />
-                {post.feature_image_caption && (
-                  <figcaption className="text-center text-sm text-gray-600 mt-2">
-                    {post.feature_image_caption}
-                  </figcaption>
-                )}
+              <div className="sticky top-8">
+                <figure>
+                  <Image
+                    src={post.feature_image || 'https://placehold.co/800x600'}
+                    alt={post.feature_image_alt || post.title}
+                    width={800}
+                    height={600}
+                    className="w-full h-auto object-cover rounded-lg"
+                    priority
+                  />
+                  {post.feature_image_caption && (
+                    <figcaption className="text-center text-sm text-gray-600 mt-2">
+                      {post.feature_image_caption}
+                    </figcaption>
+                  )}
+                </figure>
               </div>
             </div>
           </div>

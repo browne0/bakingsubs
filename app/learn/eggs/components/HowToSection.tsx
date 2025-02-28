@@ -6,6 +6,7 @@ export default async function HowToSection() {
   const posts = await getPostsBySlugs([
     'the-ultimate-guide-to-flax-eggs',
     'how-to-make-aquafaba-meringue-at-home',
+    'how-to-use-applesauce-as-an-egg-substitute-in-your-favorite-recipes',
   ]);
 
   return (

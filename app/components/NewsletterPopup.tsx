@@ -68,7 +68,7 @@ export function NewsletterPopup() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="max-w-[90vw] md:max-w-[800px] flex flex-col">
-        <div className="flex flex-col md:flex-row md:items-center gap-6">
+        <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-0 md:pl-0">
           <div className="flex-1 md:p-6">
             <img
               src={BakedGoodsImg.src}
