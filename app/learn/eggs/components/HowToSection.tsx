@@ -1,5 +1,4 @@
 import { getPostsBySlugs } from '@/lib/ghost';
-import { formatDistanceToNow } from 'date-fns';
 
 export default async function HowToSection() {
   // Specify the exact slugs of the posts you want to display
@@ -10,7 +9,7 @@ export default async function HowToSection() {
   ]);
 
   return (
-    <section id="blog-posts" className="py-6">
+    <section id="how-to" className="py-6">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
           How To Use Egg Substitutes
@@ -43,9 +42,6 @@ export default async function HowToSection() {
               </div>
 
               <div className="p-6">
-                <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                  {formatDistanceToNow(new Date(post.published_at), { addSuffix: true })}
-                </div>
                 <h3
                   className="text-xl font-semibold text-gray-900 dark:text-white 
                              group-hover:text-blue-600 dark:group-hover:text-blue-400 

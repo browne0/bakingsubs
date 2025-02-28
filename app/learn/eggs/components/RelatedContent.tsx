@@ -11,11 +11,13 @@ type SubstitutionCategory = {
 
 function getRandomCategories(
   categories: SubstitutionCategory[],
-  count: number
+  count: number,
+  currentCategory: string
 ): SubstitutionCategory[] {
-  // First, separate complete and coming-soon categories
-  const complete = categories.filter((cat) => cat.status === 'complete');
-  const comingSoon = categories.filter((cat) => cat.status === 'coming-soon');
+  // First, filter out the current category and separate complete and coming-soon categories
+  const filteredCategories = categories.filter((cat) => !cat.href.includes(currentCategory));
+  const complete = filteredCategories.filter((cat) => cat.status === 'complete');
+  const comingSoon = filteredCategories.filter((cat) => cat.status === 'coming-soon');
 
   // Shuffle both arrays
   const shuffledComplete = [...complete].sort(() => Math.random() - 0.5);
@@ -36,7 +38,7 @@ function getRandomCategories(
 }
 
 export default function RelatedContent() {
-  const relatedTopics = getRandomCategories(substitutionCategories, 3);
+  const relatedTopics = getRandomCategories(substitutionCategories, 3, 'eggs');
 
   return (
     <section className="py-6">
