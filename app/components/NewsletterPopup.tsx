@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import BakedGoodsImg from '@/app/images/baked_goods.jpg';
 import { Button } from '@/components/ui/button';
 import {
@@ -67,13 +68,16 @@ export function NewsletterPopup() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-[90vw] md:max-w-[800px] flex flex-col">
+      <DialogContent className="max-w-[90vw] md:max-w-[800px] min-h-[300px] flex flex-col justify-center">
         <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-0 md:pl-0">
           <div className="flex-1 md:p-6">
-            <img
+            <Image
               src={BakedGoodsImg.src}
               alt="Baking newsletter"
+              width={800}
+              height={600}
               className="w-full h-auto md:rounded-lg object-cover"
+              priority
             />
           </div>
           <div className="flex-1 p-6 pt-0">
