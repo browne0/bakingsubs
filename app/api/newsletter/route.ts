@@ -22,10 +22,14 @@ function generateToken() {
 
 export async function POST(request: Request) {
   try {
-    const { email } = await request.json();
+    const { email, name } = await request.json();
 
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+    }
+
+    if (!name) {
+      return NextResponse.json({ error: 'Name is required' }, { status: 400 });
     }
 
     // Generate JWT token for authentication
@@ -40,6 +44,7 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         members: [
           {
+            name,
             email,
             subscribed: true,
             labels: ['website-signup'],

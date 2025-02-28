@@ -11,14 +11,32 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import * as z from 'zod';
+
+const formSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Please enter a valid email address'),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 export function NewsletterPopup() {
-  const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [hasShown, setHasShown] = useState(false);
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+    },
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,8 +55,7 @@ export function NewsletterPopup() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [hasShown]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (values: FormValues) => {
     setIsLoading(true);
 
     try {
@@ -47,7 +64,7 @@ export function NewsletterPopup() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify(values),
       });
 
       const data = await response.json();
@@ -57,7 +74,7 @@ export function NewsletterPopup() {
       }
 
       toast.success('Successfully subscribed to newsletter!');
-      setEmail('');
+      form.reset();
       setIsOpen(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to subscribe');
@@ -68,20 +85,19 @@ export function NewsletterPopup() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-[90vw] md:max-w-[800px] min-h-[300px] flex flex-col justify-center">
-        <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-0 md:pl-0">
-          <div className="flex-1 md:p-6">
+      <DialogContent className="max-w-[90vw] md:max-w-[700px] p-0 overflow-hidden">
+        <div className="flex flex-col md:flex-row">
+          <div className="relative md:w-[45%] h-[200px] md:h-auto">
             <Image
               src={BakedGoodsImg.src}
               alt="Baking newsletter"
-              width={800}
-              height={600}
-              className="w-full h-auto md:rounded-lg object-cover"
+              fill
+              className="object-cover"
               priority
             />
           </div>
-          <div className="flex-1 p-6 pt-0">
-            <DialogHeader>
+          <div className="flex-1 p-6 md:p-8">
+            <DialogHeader className="mb-6">
               <DialogTitle className="text-2xl font-serif">Never miss a substitution</DialogTitle>
               <DialogDescription className="text-base">
                 Join 100+ home bakers who never let a missing ingredient stop their baking.
@@ -89,28 +105,51 @@ export function NewsletterPopup() {
               </DialogDescription>
             </DialogHeader>
 
-            <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Input
-                  type="email"
-                  placeholder="Your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1"
-                  required
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Your name" className="h-11 px-4" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
                 />
-                <Button type="submit" disabled={isLoading}>
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="Your email"
+                          className="h-11 px-4"
+                          required
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <Button type="submit" disabled={isLoading} className="w-full h-11">
                   {isLoading ? 'Subscribing...' : 'Subscribe'}
                 </Button>
-              </div>
-              <p className="text-sm text-muted-foreground text-center">
-                By subscribing, you agree to our{' '}
-                <a href="/privacy" className="underline hover:text-foreground">
-                  privacy policy
-                </a>
-                .
-              </p>
-            </form>
+
+                <p className="text-sm text-muted-foreground text-center">
+                  By subscribing, you agree to our{' '}
+                  <a href="/privacy" className="underline hover:text-foreground">
+                    privacy policy
+                  </a>
+                  .
+                </p>
+              </form>
+            </Form>
           </div>
         </div>
       </DialogContent>

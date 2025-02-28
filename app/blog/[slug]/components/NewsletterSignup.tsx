@@ -2,15 +2,32 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import * as z from 'zod';
+
+const formSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Please enter a valid email address'),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 export function NewsletterSignup() {
-  const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+    },
+  });
+
+  const onSubmit = async (values: FormValues) => {
     setIsLoading(true);
 
     try {
@@ -19,7 +36,7 @@ export function NewsletterSignup() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify(values),
       });
 
       const data = await response.json();
@@ -29,7 +46,7 @@ export function NewsletterSignup() {
       }
 
       toast.success('Successfully subscribed to newsletter!');
-      setEmail('');
+      form.reset();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to subscribe');
     } finally {
@@ -44,28 +61,50 @@ export function NewsletterSignup() {
           Never miss a substitution
         </h2>
 
-        <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-lg mx-auto">
+        <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-lg mx-auto">
           Subscribe to our newsletter for community-tested substitutions, baking tips, and weekly
           updates about our favorite recipes.
         </p>
 
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-4">
-          <div className="flex gap-3">
-            <Input
-              type="email"
-              placeholder="Your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="flex-1"
-              required
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-md mx-auto space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Your name" className="h-11 px-4" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
             />
-            <Button type="submit" disabled={isLoading} variant="default">
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Your email"
+                      className="h-11 px-4"
+                      required
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" disabled={isLoading} className="w-full h-11">
               {isLoading ? 'Subscribing...' : 'Subscribe'}
             </Button>
-          </div>
-        </form>
+          </form>
+        </Form>
 
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-6">
           Join 100+ home bakers who never let a missing ingredient stop their baking.
         </p>
       </div>
