@@ -84,7 +84,7 @@ function CategoryCard({
       <img
         src={typeof image === 'string' ? image : image.src}
         alt={title}
-        className="object-fit aspect-[16/9]"
+        className="object-cover aspect-[16/9]"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/0" />
 

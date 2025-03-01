@@ -1,4 +1,5 @@
 import { NewsletterSignup } from '@/app/blog/[slug]/components/NewsletterSignup';
+import Eggs3 from '@/app/images/learn/eggs/eggs3.jpg';
 import BackToTopButton from '@/components/BackToTopButton';
 import QuickReferenceTable from '@/components/learn/QuickReferenceTable';
 import type { Metadata } from 'next';
@@ -27,7 +28,7 @@ export default function EggFunctionsPage() {
         {/* Featured Image for Mobile */}
         <div className="lg:hidden mb-8">
           <Image
-            src="https://placehold.co/800x600"
+            src={Eggs3}
             alt="Eggs in baking"
             width={800}
             height={600}
@@ -91,11 +92,11 @@ export default function EggFunctionsPage() {
               <div className="sticky top-8">
                 <figure>
                   <Image
-                    src="https://placehold.co/800x600"
+                    src={Eggs3}
                     alt="Eggs in baking"
                     width={800}
                     height={600}
-                    className="w-full h-auto object-cover rounded-lg"
+                    className="w-full h-auto object-cover rounded-lg aspect-square"
                     priority
                   />
                 </figure>

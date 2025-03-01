@@ -1,4 +1,5 @@
 import { NewsletterSignup } from '@/app/blog/[slug]/components/NewsletterSignup';
+import Eggs2 from '@/app/images/learn/eggs/eggs2.jpg';
 import BackToTopButton from '@/components/BackToTopButton';
 import type { Metadata } from 'next';
 import Image from 'next/image';
@@ -44,7 +45,7 @@ export default function MistakesPage() {
         {/* Featured Image for Mobile */}
         <div className="lg:hidden mb-8">
           <Image
-            src="https://placehold.co/800x600"
+            src={Eggs2}
             alt="Common baking mistakes with eggs"
             width={800}
             height={600}
@@ -106,11 +107,11 @@ export default function MistakesPage() {
               <div className="sticky top-8">
                 <figure>
                   <Image
-                    src="https://placehold.co/800x600"
+                    src={Eggs2}
                     alt="Common baking mistakes with eggs"
                     width={800}
                     height={600}
-                    className="w-full h-auto object-cover rounded-lg"
+                    className="w-full h-auto object-cover rounded-lg aspect-square"
                     priority
                   />
                 </figure>
