@@ -1,5 +1,6 @@
 import { getIngredientBySlug } from '@/app/services/ingredientService';
 import { getSubstitutionsByIngredientId } from '@/app/services/substitutionService';
+import { JsonLd, generateIngredientJsonLd } from '@/app/utils/jsonLd';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { IngredientPageClient } from './IngredientPageClient';
@@ -52,5 +53,14 @@ export default async function IngredientPage({ params }: { params: Promise<{ slu
     throw substitutionsError;
   }
 
-  return <IngredientPageClient ingredient={ingredient} substitutions={substitutions ?? []} />;
+  // Generate JSON-LD structured data
+  const jsonLdData = generateIngredientJsonLd(ingredient);
+
+  return (
+    <>
+      {/* Add JSON-LD structured data */}
+      <JsonLd data={jsonLdData} />
+      <IngredientPageClient ingredient={ingredient} substitutions={substitutions ?? []} />
+    </>
+  );
 }

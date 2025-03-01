@@ -1,4 +1,5 @@
 import { getSubstitutionById } from '@/app/services/substitutionService';
+import { JsonLd, generateSubstitutionJsonLd } from '@/app/utils/jsonLd';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { SubstitutionPageClient } from './SubstitutionPageClient';
@@ -36,5 +37,23 @@ export default async function SubstitutionPage({ params }: Props) {
     notFound();
   }
 
-  return <SubstitutionPageClient substitution={substitution} />;
+  // Generate JSON-LD structured data
+  const jsonLdData = generateSubstitutionJsonLd(
+    substitution,
+    substitution.from_ingredient,
+    substitution.substitution_ingredients.map((si) => ({
+      ingredient: si.ingredient,
+      amount: si.amount,
+      unit: si.unit,
+      notes: si.notes || undefined,
+    }))
+  );
+
+  return (
+    <>
+      {/* Add JSON-LD structured data */}
+      <JsonLd data={jsonLdData} />
+      <SubstitutionPageClient substitution={substitution} />
+    </>
+  );
 }

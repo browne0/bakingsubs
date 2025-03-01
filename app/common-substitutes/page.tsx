@@ -1,3 +1,4 @@
+import { JsonLd, generateCommonSubstitutesJsonLd } from '@/app/utils/jsonLd';
 import { WorkInProgress } from '@/components/WorkInProgress';
 import { ogImage } from '@/lib/metadata';
 import { Metadata } from 'next';
@@ -13,5 +14,14 @@ export const metadata: Metadata = {
 };
 
 export default function CommonSubstitutesPage() {
-  return <WorkInProgress />;
+  // Generate JSON-LD structured data for the common substitutes page
+  const jsonLdData = generateCommonSubstitutesJsonLd();
+
+  return (
+    <>
+      {/* Add JSON-LD structured data */}
+      <JsonLd data={jsonLdData} />
+      <WorkInProgress />
+    </>
+  );
 }
