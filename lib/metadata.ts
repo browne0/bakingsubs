@@ -1,6 +1,17 @@
+import Logo from '@/app/images/logo_horizontal.png';
 import { Metadata } from 'next';
-
 // Base metadata configuration
+
+export const ogImage = {
+  images: [
+    {
+      url: Logo.src,
+      width: 1200,
+      height: 630,
+      alt: 'BakingSubs - Smart Baking Substitutions',
+    },
+  ],
+};
 export const baseMetadata: Metadata = {
   metadataBase: new URL('https://bakingsubs.com'),
   title: {
@@ -14,14 +25,7 @@ export const baseMetadata: Metadata = {
     locale: 'en_US',
     url: 'https://bakingsubs.com',
     siteName: 'BakingSubs',
-    images: [
-      {
-        url: '/images/og-default.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'BakingSubs - Smart Baking Substitutions',
-      },
-    ],
+    ...ogImage,
   },
   robots: {
     index: true,

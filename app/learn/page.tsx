@@ -6,7 +6,7 @@ import LeavenersImg from '@/app/images/learn/leaveners/cover.jpg';
 import MilkImg from '@/app/images/learn/milk/cover.jpg';
 import OilsFatsImg from '@/app/images/learn/oils/cover.jpg';
 import SugarImg from '@/app/images/learn/sugar/cover.jpg';
-
+import { ogImage } from '@/lib/metadata';
 import { Metadata } from 'next';
 import Image, { StaticImageData } from 'next/image';
 import Link from 'next/link';
@@ -15,6 +15,12 @@ export const metadata: Metadata = {
   title: 'Learn About Baking Substitutions | BakingSubs',
   description:
     'Discover how to substitute common baking ingredients. From eggs to flour, find the right alternatives for your dietary needs and preferences.',
+  openGraph: {
+    title: 'Learn About Baking Substitutions - BakingSubs',
+    description:
+      'Discover how to substitute common baking ingredients. From eggs to flour, find the right alternatives for your dietary needs and preferences.',
+    ...ogImage,
+  },
 };
 
 export const substitutionCategories: {

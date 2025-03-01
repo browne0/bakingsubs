@@ -1,4 +1,5 @@
 import { getPosts } from '@/lib/ghost';
+import { ogImage } from '@/lib/metadata';
 import { Cake } from 'lucide-react';
 import { Metadata } from 'next';
 import Image from 'next/image';
@@ -8,6 +9,11 @@ import { NewsletterPopup } from '../components/NewsletterPopup';
 export const metadata: Metadata = {
   title: 'Baking Substitutions Blog',
   description: 'Expert advice, tips, and insights about baking substitutions and techniques',
+  openGraph: {
+    title: 'Baking Substitutions Blog - BakingSubs',
+    description: 'Expert advice, tips, and insights about baking substitutions and techniques',
+    ...ogImage,
+  },
 };
 
 function formatDate(dateString: string) {

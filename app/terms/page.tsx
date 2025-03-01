@@ -1,11 +1,15 @@
-import { BreadcrumbNav } from '@/components/BreadcrumbNav';
-import { baseMetadata } from '@/lib/metadata';
+import { baseMetadata, ogImage } from '@/lib/metadata';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   ...baseMetadata,
   title: 'Terms of Service | BakingSubs',
   description: 'Terms of service and usage conditions for BakingSubs',
+  openGraph: {
+    title: 'Terms of Service - BakingSubs',
+    description: 'Terms of service and usage conditions for BakingSubs',
+    ...ogImage,
+  },
 };
 
 export default function TermsPage() {

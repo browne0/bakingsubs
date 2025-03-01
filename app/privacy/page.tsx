@@ -1,8 +1,14 @@
+import { ogImage } from '@/lib/metadata';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description: 'Privacy Policy for BakingSubs - Your trusted baking substitution resource',
+  openGraph: {
+    title: 'Privacy Policy - BakingSubs',
+    description: 'Privacy Policy for BakingSubs - Your trusted baking substitution resource',
+    ...ogImage,
+  },
 };
 
 export default function PrivacyPolicy() {
