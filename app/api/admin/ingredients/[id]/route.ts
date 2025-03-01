@@ -49,7 +49,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       imageUrl = publicUrl;
     }
 
-    // Parse arrays from form data
+    // Parse arrays and numeric values from form data
     const data = {
       name: formData.get('name') as string,
       category: formData.get('category') as string,
@@ -60,6 +60,14 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       default_unit: formData.get('default_unit') as string,
       notes: formData.get('notes') as string,
       ...(imageUrl && { image_url: imageUrl }),
+      // Add nutrition fields with proper type conversion
+      calories: formData.get('calories') ? Number(formData.get('calories')) : null,
+      fat: formData.get('fat') ? Number(formData.get('fat')) : null,
+      carbohydrates: formData.get('carbohydrates') ? Number(formData.get('carbohydrates')) : null,
+      protein: formData.get('protein') ? Number(formData.get('protein')) : null,
+      sodium: formData.get('sodium') ? Number(formData.get('sodium')) : null,
+      fiber: formData.get('fiber') ? Number(formData.get('fiber')) : null,
+      sugar: formData.get('sugar') ? Number(formData.get('sugar')) : null,
     };
 
     const { data: ingredient, error } = await supabase

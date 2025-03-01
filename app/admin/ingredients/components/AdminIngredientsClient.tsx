@@ -20,9 +20,9 @@ import {
 import { Tables } from '@/database.types';
 import { useQuery } from '@tanstack/react-query';
 import debounce from 'lodash/debounce';
-import { MoreHorizontal, Plus, Search } from 'lucide-react';
+import { ChevronDown, ChevronUp, MoreHorizontal, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { CATEGORY_OPTIONS } from '../../constants';
 
@@ -32,6 +32,29 @@ interface AdminIngredientsClientProps {
 
 export function AdminIngredientsClient({ initialIngredients }: AdminIngredientsClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+
+  const hasNutritionData = (ingredient: Tables<'ingredients'>) => {
+    return (
+      ingredient.calories !== null ||
+      ingredient.protein !== null ||
+      ingredient.fat !== null ||
+      ingredient.carbohydrates !== null ||
+      ingredient.fiber !== null ||
+      ingredient.sugar !== null ||
+      ingredient.sodium !== null
+    );
+  };
+
+  const toggleRow = (id: string) => {
+    const newExpandedRows = new Set(expandedRows);
+    if (newExpandedRows.has(id)) {
+      newExpandedRows.delete(id);
+    } else {
+      newExpandedRows.add(id);
+    }
+    setExpandedRows(newExpandedRows);
+  };
 
   const { data: ingredients = initialIngredients, isLoading } = useQuery({
     queryKey: ['admin-ingredients', searchQuery],
@@ -95,6 +118,7 @@ export function AdminIngredientsClient({ initialIngredients }: AdminIngredientsC
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Functions</TableHead>
@@ -103,33 +127,123 @@ export function AdminIngredientsClient({ initialIngredients }: AdminIngredientsC
           </TableHeader>
           <TableBody>
             {ingredients.map((ingredient) => (
-              <TableRow key={ingredient.id}>
-                <TableCell>{ingredient.name}</TableCell>
-                <TableCell>
-                  {CATEGORY_OPTIONS.find((cat) => cat.value === ingredient.category)?.label}
-                </TableCell>
-                <TableCell>{ingredient.functions?.join(', ')}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild>
-                        <Link href={`/admin/ingredients/${ingredient.id}`}>Edit</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-destructive"
-                        onClick={() => handleDelete(ingredient.id)}
+              <React.Fragment key={ingredient.id}>
+                <TableRow>
+                  <TableCell>
+                    {ingredient.image_url ? (
+                      <img
+                        src={ingredient.image_url}
+                        alt={ingredient.name}
+                        className="w-12 h-12 object-cover rounded-md"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-muted rounded-md flex items-center justify-center">
+                        <span className="text-xs text-center text-muted-foreground">No image</span>
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell>{ingredient.name}</TableCell>
+                  <TableCell>
+                    {CATEGORY_OPTIONS.find((cat) => cat.value === ingredient.category)?.label}
+                  </TableCell>
+                  <TableCell>{ingredient.functions?.join(', ')}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0"
+                        onClick={() => toggleRow(ingredient.id)}
+                        disabled={!hasNutritionData(ingredient)}
+                        title={
+                          hasNutritionData(ingredient)
+                            ? 'Show nutrition information'
+                            : 'No nutrition information available'
+                        }
                       >
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
+                        {expandedRows.has(ingredient.id) ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown
+                            className={`h-4 w-4 ${!hasNutritionData(ingredient) ? 'text-muted-foreground/50' : ''}`}
+                          />
+                        )}
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem asChild>
+                            <Link href={`/admin/ingredients/${ingredient.id}`}>Edit</Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={() => handleDelete(ingredient.id)}
+                          >
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </TableCell>
+                </TableRow>
+                {expandedRows.has(ingredient.id) && (
+                  <TableRow className="bg-muted/50">
+                    <TableCell colSpan={5} className="py-2 px-4">
+                      <div className="py-2">
+                        <h4 className="font-semibold mb-2">Nutrition Information (per 100g)</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          {ingredient.calories !== null && (
+                            <div>
+                              <span className="text-sm font-medium">Calories:</span>{' '}
+                              <span className="text-sm">{ingredient.calories} kcal</span>
+                            </div>
+                          )}
+                          {ingredient.protein !== null && (
+                            <div>
+                              <span className="text-sm font-medium">Protein:</span>{' '}
+                              <span className="text-sm">{ingredient.protein}g</span>
+                            </div>
+                          )}
+                          {ingredient.fat !== null && (
+                            <div>
+                              <span className="text-sm font-medium">Fat:</span>{' '}
+                              <span className="text-sm">{ingredient.fat}g</span>
+                            </div>
+                          )}
+                          {ingredient.carbohydrates !== null && (
+                            <div>
+                              <span className="text-sm font-medium">Carbohydrates:</span>{' '}
+                              <span className="text-sm">{ingredient.carbohydrates}g</span>
+                            </div>
+                          )}
+                          {ingredient.fiber !== null && (
+                            <div>
+                              <span className="text-sm font-medium">Fiber:</span>{' '}
+                              <span className="text-sm">{ingredient.fiber}g</span>
+                            </div>
+                          )}
+                          {ingredient.sugar !== null && (
+                            <div>
+                              <span className="text-sm font-medium">Sugar:</span>{' '}
+                              <span className="text-sm">{ingredient.sugar}g</span>
+                            </div>
+                          )}
+                          {ingredient.sodium !== null && (
+                            <div>
+                              <span className="text-sm font-medium">Sodium:</span>{' '}
+                              <span className="text-sm">{ingredient.sodium}mg</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </React.Fragment>
             ))}
           </TableBody>
         </Table>

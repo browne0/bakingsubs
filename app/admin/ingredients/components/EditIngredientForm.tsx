@@ -42,6 +42,13 @@ const schema = z.object({
   default_unit: z.string().optional(),
   notes: z.string().optional(),
   image: z.instanceof(File).optional(),
+  calories: z.number().nullable(),
+  fat: z.number().nullable(),
+  carbohydrates: z.number().nullable(),
+  protein: z.number().nullable(),
+  sodium: z.number().nullable(),
+  fiber: z.number().nullable(),
+  sugar: z.number().nullable(),
 });
 
 interface EditIngredientFormProps {
@@ -64,6 +71,13 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
       allergens: ingredient.allergens || [],
       default_unit: ingredient.default_unit || 'g',
       notes: ingredient.notes || '',
+      calories: ingredient.calories,
+      fat: ingredient.fat,
+      carbohydrates: ingredient.carbohydrates,
+      protein: ingredient.protein,
+      sodium: ingredient.sodium,
+      fiber: ingredient.fiber,
+      sugar: ingredient.sugar,
     },
   });
 
@@ -326,6 +340,165 @@ export function EditIngredientForm({ ingredient }: EditIngredientFormProps) {
                   </FormItem>
                 )}
               />
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Nutrition Information (per 100g)</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="calories"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Calories (kcal)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) =>
+                            field.onChange(e.target.value ? Number(e.target.value) : null)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="protein"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Protein (g)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) =>
+                            field.onChange(e.target.value ? Number(e.target.value) : null)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="fat"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Fat (g)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) =>
+                            field.onChange(e.target.value ? Number(e.target.value) : null)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="carbohydrates"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Carbohydrates (g)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) =>
+                            field.onChange(e.target.value ? Number(e.target.value) : null)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="fiber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Fiber (g)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) =>
+                            field.onChange(e.target.value ? Number(e.target.value) : null)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="sugar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sugar (g)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) =>
+                            field.onChange(e.target.value ? Number(e.target.value) : null)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="sodium"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sodium (mg)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="1"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) =>
+                            field.onChange(e.target.value ? Number(e.target.value) : null)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
           </Card>
 

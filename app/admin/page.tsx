@@ -210,6 +210,12 @@ const adminResources = [
     description: "Generate blog post content. Sign in with Malik's Google account.",
     icon: 'Newspaper',
   },
+  {
+    title: 'USDA Food Composition Database',
+    href: 'https://fdc.nal.usda.gov/',
+    description: 'Search for nutritional information on foods.',
+    icon: 'Search',
+  },
 ];
 
 export default function AdminPage() {
