@@ -351,29 +351,41 @@ export async function updateSubstitution(
 }
 
 export async function getEggSubstitutions() {
-  const supabase = await createClient();
+  const { data: substitutes } = await getSubstitutionsByIngredientId('large-eggs');
 
-  return supabase
-    .from('substitutions')
-    .select(
-      `
-      id,
-      name,
-      amount,
-      unit,
-      best_for,
-      rating,
-      description: notes,
-      image_url,
-      substitution_ingredients (
-        amount,
-        unit,
-        notes,
-        ingredient:ingredients!ingredient_id (*)
-      )
-    `
-    )
-    .eq('original_ingredient_id', 'large-eggs')
-    .order('rating', { ascending: false })
-    .limit(6);
+  return {
+    data: substitutes
+      ?.map((sub) => ({
+        id: sub.id,
+        name: sub.name,
+        amount: sub.amount,
+        unit: sub.unit,
+        best_for: sub.best_for,
+        rating: sub.rating,
+        description: sub.notes,
+        image_url: sub.image_url || 'https://placehold.co/400x600',
+        substitution_ingredients: sub.substitution_ingredients,
+      }))
+      .slice(0, 6),
+  };
+}
+
+export async function getMilkSubstitutions() {
+  const { data: substitutes } = await getSubstitutionsByIngredientId('milk');
+
+  return {
+    data: substitutes
+      ?.map((sub) => ({
+        id: sub.id,
+        name: sub.name,
+        amount: sub.amount,
+        unit: sub.unit,
+        best_for: sub.best_for,
+        rating: sub.rating,
+        description: sub.notes,
+        image_url: sub.image_url || 'https://placehold.co/400x600',
+        substitution_ingredients: sub.substitution_ingredients,
+      }))
+      .slice(0, 6),
+  };
 }

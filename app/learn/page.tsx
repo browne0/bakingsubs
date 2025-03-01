@@ -39,7 +39,7 @@ export const substitutionCategories: {
     title: 'Milk',
     image: MilkImg,
     href: '/learn/milk',
-    status: 'coming-soon' as const,
+    status: 'complete' as const,
   },
   {
     title: 'Sugar',

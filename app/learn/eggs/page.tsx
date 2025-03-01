@@ -1,13 +1,14 @@
+import NavigationMenu from '@/components/learn/shared/NavigationMenu';
 import { ogImage } from '@/lib/metadata';
 import { Metadata } from 'next';
-import FaqSection from './components/FaqSection';
-import HeroSection from './components/HeroSection';
-import HowToSection from './components/HowToSection';
-import NavigationMenu from './components/NavigationMenu';
-import RelatedContent from './components/RelatedContent';
-import ScienceSection from './components/ScienceSection';
-import StartHereSection from './components/StartHereSection';
-import SubstitutesGrid from './components/SubstitutesGrid';
+import EggsFaq from './components/EggsFaq';
+import EggsHero from './components/EggsHero';
+import EggsHowTo from './components/EggsHowTo';
+import EggsRelated from './components/EggsRelated';
+import EggsScience from './components/EggsScience';
+import EggsStartHere from './components/EggsStartHere';
+import EggsSubstitutes from './components/EggsSubstitutes';
+
 export const metadata: Metadata = {
   title: 'Egg Substitutions in Baking | BakingSubs',
   description:
@@ -23,16 +24,15 @@ export const metadata: Metadata = {
 export default function EggSubstitutionsHub() {
   return (
     <main className="min-h-screen">
-      <HeroSection />
+      <EggsHero />
       <NavigationMenu />
       <div className="container mx-auto px-4 py-8 space-y-16 max-w-6xl [&>section]:scroll-mt-20">
-        <StartHereSection />
-        <ScienceSection />
-        <SubstitutesGrid />
-        <HowToSection />
-        {/* <RecipeSection /> */}
-        <FaqSection />
-        <RelatedContent />
+        <EggsStartHere />
+        <EggsScience />
+        <EggsSubstitutes />
+        <EggsHowTo />
+        <EggsFaq />
+        <EggsRelated />
       </div>
     </main>
   );

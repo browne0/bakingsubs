@@ -1,8 +1,7 @@
 import { StaticImageData } from 'next/image';
 import Link from 'next/link';
-import { substitutionCategories } from '../../page';
 
-type SubstitutionCategory = {
+export type SubstitutionCategory = {
   title: string;
   image: string | StaticImageData;
   href: string;
@@ -14,7 +13,7 @@ function getRandomCategories(
   count: number,
   currentCategory: string
 ): SubstitutionCategory[] {
-  // First, filter out the current category and separate complete and coming-soon categories
+  // Filter out the current category and separate complete and coming-soon categories
   const filteredCategories = categories.filter((cat) => !cat.href.includes(currentCategory));
   const complete = filteredCategories.filter((cat) => cat.status === 'complete');
   const comingSoon = filteredCategories.filter((cat) => cat.status === 'coming-soon');
@@ -37,18 +36,28 @@ function getRandomCategories(
   return result.slice(0, count);
 }
 
-export default function RelatedContent() {
-  const relatedTopics = getRandomCategories(substitutionCategories, 3, 'eggs');
+interface RelatedContentProps {
+  categories: SubstitutionCategory[];
+  currentCategory: string;
+  count?: number;
+  title?: string;
+  description?: string;
+}
+
+export default function RelatedContent({
+  categories,
+  currentCategory,
+  count = 3,
+  title = 'Explore More Baking Substitutions',
+  description = 'Discover more ways to adapt your favorite recipes with these comprehensive guides.',
+}: RelatedContentProps) {
+  const relatedTopics = getRandomCategories(categories, count, currentCategory);
 
   return (
     <section className="py-6">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
-          Explore More Baking Substitutions
-        </h2>
-        <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">
-          Discover more ways to adapt your favorite recipes with these comprehensive guides.
-        </p>
+        <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">{title}</h2>
+        <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">{description}</p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {relatedTopics.map((topic) => (
@@ -86,7 +95,7 @@ function CategoryCard({
         alt={title}
         className="object-cover aspect-[16/9]"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/0" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/30" />
 
       <div className="absolute inset-x-0 bottom-0 p-4">
         <h2 className="text-xl md:text-2xl font-bold text-white">{title}</h2>

@@ -49,45 +49,26 @@ export type GhostTag = {
   slug: string;
 };
 
-export type GhostPost = {
+export type Post = {
   id: string;
-  uuid: string;
   slug: string;
   title: string;
-  html: string;
-  comment_id: string;
+  feature_image?: string;
+  feature_image_alt?: string;
+  excerpt?: string;
+  custom_excerpt?: string;
+  reading_time: number;
+};
+
+export type GhostPost = {
+  id: string;
+  slug: string;
+  title: string;
   feature_image: string | null;
   feature_image_alt: string | null;
-  feature_image_caption: string | null;
-  featured: boolean;
-  visibility: string;
-  created_at: string;
-  updated_at: string;
-  published_at: string;
+  excerpt: string | null;
   custom_excerpt: string | null;
-  codeinjection_head: string | null;
-  codeinjection_foot: string | null;
-  custom_template: string | null;
-  canonical_url: string | null;
-  tags: GhostTag[];
-  authors: GhostAuthor[];
-  primary_author: GhostAuthor;
-  primary_tag: GhostTag | null;
-  url: string;
-  excerpt: string;
   reading_time: number;
-  access: boolean;
-  comments: boolean;
-  og_image: string | null;
-  og_title: string | null;
-  og_description: string | null;
-  twitter_image: string | null;
-  twitter_title: string | null;
-  twitter_description: string | null;
-  meta_title: string | null;
-  meta_description: string | null;
-  email_subject: string | null;
-  frontmatter: string | null;
 };
 
 export async function getPosts() {
@@ -108,15 +89,37 @@ export async function getPost(slug: string) {
   )) as GhostPost;
 }
 
-export async function getPostsBySlugs(slugs: string[]) {
+export async function getPostsBySlugs(slugs: string[]): Promise<Post[]> {
+  // Create a filter string for Ghost API that matches any of the provided slugs
+  const slugFilter = `slug:[${slugs.join(',')}]`;
+
   const posts = (await ghost.posts.browse({
     limit: 'all',
     include: ['tags', 'authors'],
-    filter: `slug:[${slugs.join(',')}]`,
+    filter: slugFilter,
   })) as GhostPost[];
 
-  // Sort posts to match the order of requested slugs
-  return posts.sort((a, b) => slugs.indexOf(a.slug) - slugs.indexOf(b.slug));
+  // Ensure posts are returned in the same order as requested slugs
+  const orderedPosts = slugs
+    .map((slug) => {
+      const post = posts.find((p) => p.slug === slug);
+      if (!post) {
+        console.warn(`Post with slug "${slug}" not found`);
+        return null;
+      }
+      return {
+        id: post.id,
+        slug: post.slug,
+        title: post.title,
+        feature_image: post.feature_image || undefined,
+        feature_image_alt: post.feature_image_alt || undefined,
+        excerpt: post.excerpt || post.custom_excerpt || undefined,
+        reading_time: post.reading_time,
+      } as Post;
+    })
+    .filter((post): post is Post => post !== null);
+
+  return orderedPosts;
 }
 
 export async function getRecentPosts(limit: number = 3) {

@@ -1,28 +1,58 @@
-import { getEggSubstitutions } from '@/app/services/substitutionService';
-import { decimalToFraction } from '@/app/utils/fractions';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default async function SubstitutesGrid() {
-  const { data: substitutes = [] } = await getEggSubstitutions();
+interface SubstitutionIngredient {
+  ingredient: {
+    id: string;
+    name: string;
+  };
+  amount: number;
+  unit: string;
+}
 
-  if (!substitutes) return null;
+interface Substitute {
+  id: string;
+  name: string;
+  image_url: string;
+  substitution_ingredients: SubstitutionIngredient[];
+  best_for?: string[];
+}
+
+interface SubstitutesGridProps {
+  title?: string;
+  description?: string;
+  substitutes: Substitute[];
+  baseIngredient: string;
+  basePath: string;
+}
+
+function decimalToFraction(decimal: number): string {
+  if (decimal === 0.25) return '1/4';
+  if (decimal === 0.33) return '1/3';
+  if (decimal === 0.5) return '1/2';
+  if (decimal === 0.67) return '2/3';
+  if (decimal === 0.75) return '3/4';
+  return decimal.toString();
+}
+
+export default function SubstitutesGrid({
+  title = 'Common Substitutes',
+  description = 'Discover the most effective alternatives for your baking needs. Each substitute has its own unique properties and best uses.',
+  substitutes,
+  baseIngredient,
+  basePath,
+}: SubstitutesGridProps) {
   return (
     <section id="substitutes" className="py-6">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
-          Common Egg Substitutes
-        </h2>
-        <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">
-          Discover the most effective egg alternatives for your baking needs. Each substitute has
-          its own unique properties and best uses.
-        </p>
+        <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">{title}</h2>
+        <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">{description}</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {substitutes.map((sub) => (
             <Link
               key={sub.id}
-              href={`/ingredients/eggs/substitutions/${sub.id}`}
+              href={`${basePath}/${sub.id}`}
               className="group block bg-white dark:bg-gray-800 rounded-lg shadow-sm 
                        hover:shadow-md transition-all border border-gray-200 
                        dark:border-gray-700 overflow-hidden"
@@ -54,7 +84,7 @@ export default async function SubstitutesGrid() {
                         {decimalToFraction(si.amount)} {si.unit} {si.ingredient.name}
                       </span>
                     ))}{' '}
-                    = 1 egg
+                    = 1 {baseIngredient}
                   </div>
 
                   <div className="flex flex-wrap gap-2">

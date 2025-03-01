@@ -1,14 +1,26 @@
-import EggsImg from '@/app/images/learn/eggs/eggs.jpg';
+'use client';
 
-export default function HeroSection() {
+interface HeroSectionProps {
+  title: string;
+  subtitle?: string;
+  image: string;
+  imageAlt: string;
+}
+
+export default function HeroSection({
+  title,
+  subtitle = 'HOW TO SUBSTITUTE',
+  image,
+  imageAlt,
+}: HeroSectionProps) {
   return (
     <div className="relative">
       {/* Hero Image with Overlay */}
-      <div className="relative h-[40vh] min-h-[400px] w-full">
+      <div className="relative h-[45vh] min-h-[400px] w-full">
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/30 z-10" />
         <img
-          src={EggsImg.src}
-          alt="Various baked goods made with egg substitutes"
+          src={image}
+          alt={imageAlt}
           className="absolute inset-0 w-full h-full object-cover"
           loading="eager"
         />
@@ -21,11 +33,11 @@ export default function HeroSection() {
             <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
               <span className="h-[1px] w-4 border-t border-rose-500"></span>
               <p className="text-base font-medium tracking-wider text-white uppercase">
-                HOW TO SUBSTITUTE
+                {subtitle}
               </p>
               <span className="h-[1px] w-4 border-t border-rose-500"></span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-serif text-white">Eggs</h1>
+            <h1 className="text-5xl md:text-7xl font-serif text-white">{title}</h1>
           </div>
         </div>
       </div>

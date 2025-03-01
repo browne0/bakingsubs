@@ -411,7 +411,7 @@ export default function EggFunctionsPage() {
                     replacements.
                   </p>
                 </div>
-                <QuickReferenceTable />
+                <QuickReferenceTable ingredientType="eggs" />
               </section>
 
               {/* Practical Applications Section */}

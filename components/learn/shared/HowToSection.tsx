@@ -1,26 +1,26 @@
-import { getPostsBySlugs } from '@/lib/ghost';
+import { Post } from '@/lib/ghost';
+import Link from 'next/link';
 
-export default async function HowToSection() {
-  // Specify the exact slugs of the posts you want to display
-  const posts = await getPostsBySlugs([
-    'the-ultimate-guide-to-flax-eggs',
-    'how-to-make-aquafaba-meringue-at-home',
-    'how-to-use-applesauce-as-an-egg-substitute-in-your-favorite-recipes',
-  ]);
+interface HowToSectionProps {
+  posts: Post[];
+  title?: string;
+  description?: string;
+}
 
+export default function HowToSection({
+  posts,
+  title = 'How To Use Substitutes',
+  description = 'Essential guides about ingredient substitutions in baking.',
+}: HowToSectionProps) {
   return (
     <section id="how-to" className="py-6">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
-          How To Use Egg Substitutes
-        </h2>
-        <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">
-          Essential guides about egg substitutions in baking.
-        </p>
+        <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">{title}</h2>
+        <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">{description}</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {posts.map((post) => (
-            <a
+            <Link
               key={post.id}
               href={`/blog/${post.slug}`}
               className="group block bg-white dark:bg-gray-800 rounded-lg overflow-hidden 
@@ -53,7 +53,7 @@ export default async function HowToSection() {
                   {post.custom_excerpt || post.excerpt}
                 </p>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>

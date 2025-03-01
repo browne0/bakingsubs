@@ -3,21 +3,29 @@
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 
-const navItems = [
-  { id: 'start', label: 'Start Here' },
+interface NavigationItem {
+  id: string;
+  label: string;
+}
+
+interface NavigationMenuProps {
+  items?: NavigationItem[];
+}
+
+const defaultNavItems: NavigationItem[] = [
+  { id: 'start-here', label: 'Start Here' },
   { id: 'science', label: 'The Science' },
-  { id: 'substitutes', label: 'Common Substitutes' },
+  { id: 'substitutes', label: 'Substitutes' },
   { id: 'how-to', label: 'How To' },
-  { id: 'recipes', label: 'Recipes' },
   { id: 'faq', label: 'FAQ' },
 ];
 
-export default function NavigationMenu() {
-  const [activeSection, setActiveSection] = useState('start');
+export default function NavigationMenu({ items = defaultNavItems }: NavigationMenuProps) {
+  const [activeSection, setActiveSection] = useState('start-here');
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = navItems.map((item) => document.getElementById(item.id));
+      const sections = items.map((item) => document.getElementById(item.id));
       const currentSection = sections.find((section) => {
         if (!section) return false;
         const rect = section.getBoundingClientRect();
@@ -31,13 +39,13 @@ export default function NavigationMenu() {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [items]);
 
   return (
     <nav className="sticky top-0 bg-white dark:bg-gray-900 w-full z-30 shadow-md">
       <div className="container mx-auto px-4">
         <ul className="flex overflow-x-auto whitespace-nowrap md:justify-between py-4 gap-6 md:gap-8">
-          {navItems.map((item) => (
+          {items.map((item) => (
             <li key={item.id}>
               <a
                 href={`#${item.id}`}
