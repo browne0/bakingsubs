@@ -6,7 +6,7 @@ export const ogImage = {
   images: [
     {
       url: Logo.src,
-      width: 1200,
+      width: 630,
       height: 630,
       alt: 'BakingSubs - Smart Baking Substitutions',
     },

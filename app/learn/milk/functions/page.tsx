@@ -2,6 +2,7 @@ import { NewsletterSignup } from '@/app/blog/[slug]/components/NewsletterSignup'
 import Milk3 from '@/app/images/learn/milk/milk3.jpg';
 import BackToTopButton from '@/components/BackToTopButton';
 import QuickReferenceTable from '@/components/learn/QuickReferenceTable';
+import { ogImage } from '@/lib/metadata';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,6 +11,12 @@ export const metadata: Metadata = {
   title: 'The Function of Milk in Baking',
   description:
     'Learn how milk provides moisture, enrichment, and tenderness in baking, and why these properties matter for successful dairy-free baking.',
+  openGraph: {
+    title: 'The Function of Milk in Baking',
+    description:
+      'Learn how milk provides moisture, enrichment, and tenderness in baking, and why these properties matter for successful dairy-free baking.',
+    ...ogImage,
+  },
 };
 
 export default function MilkFunctionsPage() {
