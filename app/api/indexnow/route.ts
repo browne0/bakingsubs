@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const INDEXNOW_KEY = 'c52e67d9ca3f454c889360e666a22b6c'; // Replace with your IndexNow key
-const HOST = 'bakingsubs.com'; // Your domain name
+const INDEXNOW_KEY = process.env.INDEXNOW_KEY;
+const HOST = process.env.NEXT_PUBLIC_BASE_URL || 'https://bakingsubs.com';
 const KEY_LOCATION = `https://${HOST}/${INDEXNOW_KEY}.txt`; // URL where your key file is hosted
 const SITEMAP_URL = `https://${HOST}/sitemap.xml`; // Your sitemap URL
 
