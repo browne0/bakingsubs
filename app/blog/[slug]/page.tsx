@@ -72,6 +72,7 @@ export default async function BlogPost({ params }: { params: { slug: string } })
             width={800}
             height={600}
             className="w-full rounded-lg"
+            priority
           />
         </div>
 
