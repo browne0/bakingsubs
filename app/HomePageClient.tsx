@@ -19,6 +19,20 @@ import { CheckCircle, ChevronRight, Search, UtensilsCrossed } from 'lucide-react
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Form } from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import HappyBaker from '@/app/images/happy_baker.jpg';
 
 interface HomePageClientProps {
   initialCommonIngredients: Tables<'ingredients'>[];
@@ -31,6 +45,13 @@ interface RecentSearch {
 
 const MAX_RECENT_SEARCHES = 3;
 
+const formSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Please enter a valid email address'),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
 export function HomePageClient({ initialCommonIngredients }: HomePageClientProps) {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -40,12 +61,13 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
   const commandRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Debounced search query
   const debouncedQuery = useMemo(() => debounce((q: string) => setSearchQuery(q), 300), []);
 
   // Update the search query to use the API
-  const { data: searchResults = [], isLoading } = useQuery({
+  const { data: searchResults = [], isLoading: searchLoading } = useQuery({
     queryKey: ['ingredients', searchQuery],
     queryFn: async () => {
       const response = await fetch(`/api/ingredients?query=${encodeURIComponent(searchQuery)}`);
@@ -115,8 +137,43 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+    },
+  });
+
+  const onSubmit = async (values: FormValues) => {
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to subscribe');
+      }
+
+      toast.success('Successfully subscribed to newsletter!');
+      form.reset();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to subscribe');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <main className="min-h-screen mb-16">
+    <main className="min-h-screen">
       {/* Hero Section with Background Image */}
       <section className="relative min-h-[60vh] md:min-h-[55vh] flex items-center">
         {/* Background Image */}
@@ -181,7 +238,7 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
                           >
                             <Command className="[&_[cmdk-group-heading]]:text-left [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground">
                               <CommandList>
-                                {isLoading ? (
+                                {searchLoading ? (
                                   <CommandGroup heading="Searching...">
                                     {[...Array(3)].map((_, i) => (
                                       <CommandItem
@@ -370,6 +427,255 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
         </div>
       </section>
 
+      {/* Value Proposition Section */}
+      <section className="mt-24 bg-gradient-to-b from-background via-amber-50/50 to-amber-800/5">
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                Bake with Confidence, Every Time
+              </h2>
+              <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+                Turn missing ingredients into successful recipe adaptations with substitutions that
+                are scientifically sound and proven by real bakers.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="text-center p-6">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
+                  <UtensilsCrossed className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Recipe-Specific Solutions</h3>
+                <p className="text-muted-foreground">
+                  Not all substitutes work in every recipe. Get recommendations tailored to what
+                  you're baking, whether it's cookies, bread, or cakes.
+                </p>
+              </div>
+              <div className="text-center p-6">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
+                  <CheckCircle className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Proven by Real Bakers</h3>
+                <p className="text-muted-foreground">
+                  Every substitution is tested and rated by our community. See real results and tips
+                  from bakers who've tried it before.
+                </p>
+              </div>
+              <div className="text-center p-6">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Search className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Understand the Science</h3>
+                <p className="text-muted-foreground">
+                  Learn how each substitute affects your bake's texture, taste, and rise. Make
+                  informed decisions with our detailed explanations.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Showcase Section */}
+      <section className="mt-24 mb-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <h2 className="text-3xl font-bold tracking-tight">Why Use BakingSubs?</h2>
+                <div className="mt-8 space-y-6">
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <CheckCircle className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">
+                        Get Context-Aware Recommendations
+                      </h3>
+                      <p className="text-muted-foreground">
+                        Get substitutions that consider your specific recipe type, dietary
+                        restrictions, and available ingredients.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <UtensilsCrossed className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">
+                        Gain Access To Our Comprehensive Catalog
+                      </h3>
+                      <p className="text-muted-foreground">
+                        Access our growing list of ingredients with multiple verified substitution
+                        options for each one.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Search className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">Get Instant Results</h3>
+                      <p className="text-muted-foreground">
+                        Find your perfect substitution in seconds.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="relative">
+                <div className="aspect-square md:aspect-[4/3] lg:aspect-square rounded-2xl overflow-hidden shadow-2xl">
+                  <img
+                    src={HappyBaker.src}
+                    alt="BakingSubs Features"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="absolute -bottom-4 sm:-bottom-6 -right-4 sm:-right-6 bg-card shadow-xl rounded-xl p-3 sm:p-4 max-w-[calc(100%-2rem)] sm:max-w-xs">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-1.5 sm:mb-2">
+                    <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                    <p className="font-semibold text-sm sm:text-base">Trusted by 100+ Bakers</p>
+                  </div>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Join our growing community of successful home bakers using verified
+                    substitutions.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="mt-24">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                Frequently Asked Questions
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                Common things we get from asked from bakers just like you.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="what-is-bakingsubs">
+                    <AccordionTrigger>What is BakingSubs?</AccordionTrigger>
+                    <AccordionContent>
+                      BakingSubs is the definitive resource for baking substitutions, helping you
+                      find the perfect ingredient alternatives for your recipes.
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="how-many-ingredients">
+                    <AccordionTrigger>
+                      How many ingredients do you have substitutions for?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      We currently offer substitutions for over 50 common baking ingredients, with
+                      our database growing regularly.
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="are-substitutions-tested">
+                    <AccordionTrigger>
+                      Are your baking substitutions tested and verified?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      Yes, all our substitutions are community-tested and verified by experienced
+                      bakers. Each alternative includes detailed information about how it affects
+                      texture, taste, and the final result of your baked goods.
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="egg-substitutes">
+                    <AccordionTrigger>What can I substitute for eggs in baking?</AccordionTrigger>
+                    <AccordionContent>
+                      Common egg substitutes include mashed bananas, applesauce, ground flaxseed
+                      mixed with water, commercial egg replacers, or silken tofu. The best
+                      substitute depends on your specific recipe and dietary needs.
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="butter-substitutes">
+                    <AccordionTrigger>How do I substitute butter in a recipe?</AccordionTrigger>
+                    <AccordionContent>
+                      Butter can be substituted with oil, margarine, applesauce, Greek yogurt, or
+                      coconut oil depending on the recipe. Each substitute will affect the texture
+                      and taste differently, and our detailed guides help you choose the best option
+                      for your specific bake.
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </div>
+
+              <div className="space-y-2">
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="is-free">
+                    <AccordionTrigger>Is BakingSubs free to use?</AccordionTrigger>
+                    <AccordionContent>
+                      Yes, BakingSubs is completely free to use. You can access all our substitution
+                      guides, community recommendations, and detailed explanations without any cost.
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="substitution-ratios">
+                    <AccordionTrigger>How do you determine substitution ratios?</AccordionTrigger>
+                    <AccordionContent>
+                      Our substitution ratios are based on extensive testing, community feedback,
+                      and food science principles. We consider factors like moisture content,
+                      binding properties, and leavening effects to provide accurate conversion
+                      rates.
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="gluten-free">
+                    <AccordionTrigger>
+                      Can I find gluten-free baking substitutions?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      Yes, we offer comprehensive guides for gluten-free substitutions, including
+                      different flour alternatives and binding agents. Each substitute comes with
+                      specific measurements and tips for successful gluten-free baking.
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="best-substitute">
+                    <AccordionTrigger>
+                      How do I know which substitute will work best in my recipe?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      Our platform provides detailed information about how each substitute affects
+                      texture, taste, and structure. We categorize substitutes by recipe type
+                      (cookies, cakes, breads, etc.) and include success rates and community tips to
+                      help you make the best choice.
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="contribute">
+                    <AccordionTrigger>
+                      Can I contribute my own substitution experiences?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      Yes! BakingSubs is community-driven, and we encourage users to share their
+                      successful substitution experiences and tips. All contributions are reviewed
+                      and verified before being added to our database.
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Updated Popular Ingredients Section */}
       <section className="mt-24">
         <div className="container mx-auto px-4">
@@ -378,7 +684,7 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
               Popular Ingredient Alternatives
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Join hundreds of bakers who found their solution here
+              Join hundreds of bakers who found their solution here.
             </p>
           </div>
 
@@ -422,6 +728,81 @@ export function HomePageClient({ initialCommonIngredients }: HomePageClientProps
               ))}
             </CarouselContent>
           </Carousel>
+        </div>
+      </section>
+
+      {/* Newsletter CTA Section */}
+      <section className="relative mt-24 py-16 bg-gradient-to-r from-amber-800/10 via-amber-50/20 to-background border-y">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+                Never Miss a Substitution
+              </h2>
+
+              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+                Join 100+ home bakers who receive weekly baking substitutions, expert tips, and
+                exclusive recipes.
+              </p>
+
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input placeholder="Your name" className="h-12" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input
+                              type="email"
+                              placeholder="Your email"
+                              className="h-12"
+                              required
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button type="submit" disabled={isLoading} size="lg" className="h-12 px-8">
+                      {isLoading ? 'Subscribing...' : 'Subscribe'}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mt-8">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-primary" />
+                  <span className="text-sm">Weekly Updates</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-primary" />
+                  <span className="text-sm">Expert Tips</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-primary" />
+                  <span className="text-sm">Free Forever</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </main>

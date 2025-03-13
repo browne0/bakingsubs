@@ -49,7 +49,7 @@ export default function MistakesPage() {
     },
     {
       id: 'best-substitutes',
-      title: 'My Best Milk Substitutes by Recipe Type',
+      title: 'Our Best Milk Substitutes by Recipe Type',
     },
     {
       id: 'conclusion',
@@ -147,7 +147,7 @@ export default function MistakesPage() {
                 id="introduction"
                 className="prose-headings:font-serif prose-h2:text-4xl prose-h3:text-2xl prose-h4:text-xl max-w-none"
               >
-                <h2 className="text-3xl font-bold mb-6">Introduction</h2>
+                <h2 className="not-prose text-3xl font-bold mb-6">Introduction</h2>
 
                 <p className="text-base leading-relaxed mb-4">
                   Let's talk about something we've all been through - you're ready to bake your
@@ -606,41 +606,40 @@ export default function MistakesPage() {
                   <div className="mb-8 border-b border-gray-200 pb-6">
                     <h4 className="font-bold mb-4">For Rich Chocolate Cakes:</h4>
                     <p className="font-medium mb-2">
-                      My go-to: Equal parts oat milk and coconut milk
+                      Our go-to: Equal parts oat milk and coconut milk
                     </p>
                     <p className="text-base leading-relaxed mb-2">
                       Why it works: The oat milk provides a neutral base while coconut milk adds
                       richness without a strong flavor
                     </p>
                     <p className="text-gray-600">
-                      Real-life success: My chocolate birthday cake fooled even my dairy-loving
-                      father-in-law!
+                      Real-life success: Our chocolate birthday cake fooled my coworker who loves
+                      everything dairy.
                     </p>
                   </div>
 
                   <div className="mb-8 border-b border-gray-200 pb-6">
                     <h4 className="font-bold mb-4">For Fluffy White Cakes:</h4>
                     <p className="font-medium mb-2">
-                      My go-to: Unsweetened almond milk + 1 tablespoon neutral oil per cup
+                      Our go-to: Unsweetened almond milk + 1 tablespoon neutral oil per cup
                     </p>
                     <p className="text-base leading-relaxed mb-2">
                       Why it works: Light flavor that doesn't compete with vanilla, while added oil
                       provides tenderness
                     </p>
                     <p className="text-gray-600">
-                      Real-life success: Wedding cupcakes that were indistinguishable from the dairy
-                      version
+                      Real-life success: Cupcakes that were indistinguishable from the dairy version
                     </p>
                   </div>
 
                   <div className="mb-8 border-b border-gray-200 pb-6">
                     <h4 className="font-bold mb-4">For Crusty Artisan Bread:</h4>
-                    <p className="font-medium mb-2">My go-to: Soy milk or oat milk</p>
+                    <p className="font-medium mb-2">Our go-to: Soy milk or oat milk</p>
                     <p className="text-base leading-relaxed mb-2">
                       Why it works: Higher protein content helps with structure and browning
                     </p>
                     <p className="text-gray-600">
-                      Real-life success: My sourdough boules get that beautiful crackling crust and
+                      Real-life success: Our sourdough boules get that beautiful crackling crust and
                       open crumb
                     </p>
                   </div>
@@ -648,13 +647,13 @@ export default function MistakesPage() {
                   <div className="mb-8 border-b border-gray-200 pb-6">
                     <h4 className="font-bold mb-4">For Flaky Pastry:</h4>
                     <p className="font-medium mb-2">
-                      My go-to: Almond milk with a splash of apple cider vinegar
+                      Our go-to: Almond milk with a splash of apple cider vinegar
                     </p>
                     <p className="text-base leading-relaxed mb-2">
                       Why it works: The acid helps create layers by reacting with the leavening
                     </p>
                     <p className="text-gray-600">
-                      Real-life success: My dairy-free croissants have 27 distinct layers (yes, I
+                      Real-life success: Our dairy-free croissants have 27 distinct layers (yes, I
                       counted!)
                     </p>
                   </div>
@@ -662,15 +661,15 @@ export default function MistakesPage() {
                   <div className="mb-8 border-b border-gray-200 pb-6">
                     <h4 className="font-bold mb-4">For Creamy Puddings and Custards:</h4>
                     <p className="font-medium mb-2">
-                      My go-to: Full-fat coconut milk or cashew cream (1 cup soaked cashews blended
+                      Our go-to: Full-fat coconut milk or cashew cream (1 cup soaked cashews blended
                       with 1 cup water)
                     </p>
                     <p className="text-base leading-relaxed mb-2">
                       Why it works: High fat content gives that silky, rich mouthfeel
                     </p>
                     <p className="text-gray-600">
-                      Real-life success: My dairy-free crème brûlée converted my French neighbor who
-                      claimed it couldn't be done!
+                      Real-life success: Our dairy-free crème brûlée converted my French neighbor
+                      who claimed it couldn't be done!
                     </p>
                   </div>
                 </div>

@@ -4,9 +4,8 @@ import { getPostsBySlugs } from '@/lib/ghost';
 export default async function MilkHowTo() {
   // Specify the exact slugs of the posts you want to display
   const posts = await getPostsBySlugs([
-    'how-to-make-oat-milk-at-home',
-    'baking-with-plant-based-milk-alternatives',
-    'understanding-milk-substitutes-in-baking',
+    'how-to-make-a-buttermilk-substitute-5-easy-methods-for-a-perfect-bake-2',
+    '5-best-substitutes-for-heavy-cream-in-baking-that-actually-work',
   ]);
 
   return (
