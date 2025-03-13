@@ -1,9 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY;
 const HOST = process.env.NEXT_PUBLIC_BASE_URL || 'https://bakingsubs.com';
-const KEY_LOCATION = `https://${HOST}/${INDEXNOW_KEY}.txt`; // URL where key file is hosted
-const SITEMAP_URL = `https://${HOST}/sitemap.xml`; // Sitemap URL
+const KEY_LOCATION = `https://${HOST}/${INDEXNOW_KEY}.txt`;
+const SITEMAP_URL = `https://${HOST}/sitemap.xml`;
 
 async function fetchSitemapUrls() {
   try {
@@ -20,14 +20,10 @@ async function fetchSitemapUrls() {
   }
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
+export async function POST() {
   const urls = await fetchSitemapUrls();
   if (!urls.length) {
-    return res.status(400).json({ message: 'No URLs found in sitemap' });
+    return NextResponse.json({ message: 'No URLs found in sitemap' }, { status: 400 });
   }
 
   const requestBody = {
@@ -47,12 +43,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     const responseData = await response.json();
-    return res.status(response.ok ? 200 : response.status).json({
-      message: response.ok ? 'IndexNow request successful' : 'IndexNow request failed',
-      responseData,
-    });
+    return NextResponse.json(
+      {
+        message: response.ok ? 'IndexNow request successful' : 'IndexNow request failed',
+        responseData,
+      },
+      { status: response.ok ? 200 : response.status }
+    );
   } catch (error) {
     console.error('IndexNow API Error:', error);
-    return res.status(500).json({ message: 'Error sending request', error });
+    return NextResponse.json({ message: 'Error sending request', error }, { status: 500 });
   }
 }
