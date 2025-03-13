@@ -45,16 +45,29 @@ export async function POST() {
       body: JSON.stringify(requestBody),
     });
 
-    const responseData = await response.json();
+    // If we get a 200, it was successful even with empty response
+    if (response.ok) {
+      return NextResponse.json({
+        message: 'Successfully submitted URLs to IndexNow',
+        urlCount: urls.length,
+      });
+    } else {
+      return NextResponse.json(
+        {
+          message: 'IndexNow request failed',
+          status: response.status,
+        },
+        { status: response.status }
+      );
+    }
+  } catch (error: any) {
+    console.error('IndexNow API Error:', error);
     return NextResponse.json(
       {
-        message: response.ok ? 'IndexNow request successful' : 'IndexNow request failed',
-        responseData,
+        message: 'Error sending request',
+        error: error.message,
       },
-      { status: response.ok ? 200 : response.status }
+      { status: 500 }
     );
-  } catch (error) {
-    console.error('IndexNow API Error:', error);
-    return NextResponse.json({ message: 'Error sending request', error }, { status: 500 });
   }
 }
